@@ -70,7 +70,7 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 		for(Iterator<Renderable> rendable = renderables.iterator();rendable.hasNext();){
 			Renderable rend = rendable.next();
 			baseGraphics.setColor(rend.tile.color);
-			baseGraphics.fillRect(rend.position.x*5, rend.position.y*5, 5, 5);
+			baseGraphics.fillRect(rend.position.x*tileSize, rend.position.y*tileSize, tileSize, tileSize);
 		}
 		
 		baseBufferedGraphics.drawImage(baseImage, 0, 0, null);	

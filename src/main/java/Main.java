@@ -9,11 +9,15 @@ public class Main {
 
 	
 	public static void main(String[] args){
-		String seed = "TESTers";		
+		String seed = "TESTers";	
+		final int TILESIZE=5;
+		final int WIDTH=800,HEIGHT=600;
+		int scaleX=WIDTH/TILESIZE, scaleY=HEIGHT/TILESIZE;
+		
 		//RecursiveMaze maze = new WorldManager(25, null).generateWorld(400, 400, seed);
-		RecursiveMaze maze = new RecursiveMaze(80,80);
+		RecursiveMaze maze = new RecursiveMaze(scaleX,scaleY);
 		EntityManager em = new EntityManager();
-		RenderSystem renderSystem = new RenderSystem(400,400,5,em);
+		RenderSystem renderSystem = new RenderSystem(WIDTH,HEIGHT,TILESIZE,em);
 		
 		for(GridNode node : maze.getNodeList()){
 			int entity = em.createEntity();
