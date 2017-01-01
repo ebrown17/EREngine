@@ -1,23 +1,31 @@
+import java.util.ArrayList;
+
 import components.types.Position;
 import components.types.Renderable;
-import managers.EntityManager;
 import graphs.nodes.GridNode;
-import maps.mazes.RecursiveMaze;
+import graphs.types.GridGraph;
+import managers.EntityManager;
+import managers.MapManager;
 import systems.types.RenderSystem;
 
 public class Main {
 
 	
 	public static void main(String[] args){
-		String seed = "TESTers";	
+		String seed = "TESTersss";	
 		final int TILESIZE=5;
 		final int WIDTH=800,HEIGHT=600;
 		int scaleX=WIDTH/TILESIZE, scaleY=HEIGHT/TILESIZE;
 		
-		//RecursiveMaze maze = new WorldManager(25, null).generateWorld(400, 400, seed);
-		RecursiveMaze maze = new RecursiveMaze(scaleX,scaleY);
 		EntityManager em = new EntityManager();
+		MapManager mapManager = new MapManager(em);
+		
+		mapManager.createMazeData(scaleX, scaleY, seed);
+		GridGraph maze = mapManager.generateRecMaze(seed);
+		
 		RenderSystem renderSystem = new RenderSystem(WIDTH,HEIGHT,TILESIZE,em);
+	
+		
 		
 		for(GridNode node : maze.getNodeList()){
 			int entity = em.createEntity();
