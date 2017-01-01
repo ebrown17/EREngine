@@ -12,14 +12,14 @@ public class RecursiveMaze extends GridGraph {
 	
 	public GridNode start,end;
 	//private Random rand = new Random(625678);
-	private Random rand = new Random();
+	
 	/**	  
 	 * @param rows number of rows a maze will have
 	 * @param columns number of columns a maze will have
 	 */
 	
-	public RecursiveMaze(int rows, int columns){
-		super(rows,columns);
+	public RecursiveMaze(int rows, int columns,String seed){
+		super(rows,columns,seed);
 		long one = System.currentTimeMillis();
 		generateRecursiveMaze();
 		long two = System.currentTimeMillis();

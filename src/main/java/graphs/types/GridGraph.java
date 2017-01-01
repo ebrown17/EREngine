@@ -1,6 +1,7 @@
 package graphs.types;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import graphs.nodes.GridNode;
 import graphs.vectors.Vector2d;
@@ -10,17 +11,20 @@ public class GridGraph {
 
 	protected static final int[][] DIRS = {{1,0},{0,1},{-1,0},{0,-1}};
 	protected final int ROWS,COLUMNS;
+	protected final String SEED;
 	
 	protected ArrayList<GridNode> nodeList  = new ArrayList<GridNode>();	
-	
+	protected Random rand;
 	/**
 	 * @param rows number of rows a grid will have
 	 * @param columns number of columns a grid will have
 	 */
 	
-	public GridGraph(int rows, int columns){
+	public GridGraph(int rows, int columns,String seed){
 		this.ROWS=rows;
 		this.COLUMNS=columns;
+		this.SEED = seed;
+		rand = new Random(seed.hashCode());
 		generateNodeList();
 		setEdgeNodes();
 		
