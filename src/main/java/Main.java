@@ -1,11 +1,10 @@
-import java.util.ArrayList;
-
 import components.types.Position;
 import components.types.Renderable;
 import graphs.nodes.GridNode;
 import graphs.types.GridGraph;
 import managers.EntityManager;
 import managers.MapManager;
+import managers.RandomGeneratorManager;
 import systems.types.RenderSystem;
 
 public class Main {
@@ -18,14 +17,16 @@ public class Main {
 		int scaleX=WIDTH/TILESIZE, scaleY=HEIGHT/TILESIZE;
 		
 		EntityManager em = new EntityManager();
-		MapManager mapManager = new MapManager(em);
+		RandomGeneratorManager masterRandom = new RandomGeneratorManager(seed);		
+		MapManager mapManager = new MapManager();
 		
-		mapManager.createMazeData(scaleX, scaleY, seed);
-		GridGraph maze = mapManager.generateRecMaze(seed);
 		
-		RenderSystem renderSystem = new RenderSystem(WIDTH,HEIGHT,TILESIZE,em);
-	
+		Long idSeed = masterRandom.getNewSeed();
 		
+		mapManager.createMazeData(scaleX, scaleY, idSeed);
+		GridGraph maze = mapManager.generateRecMaze(idSeed);
+		
+		RenderSystem renderSystem = new RenderSystem(WIDTH,HEIGHT,TILESIZE,em);		
 		
 		for(GridNode node : maze.getNodeList()){
 			int entity = em.createEntity();
@@ -34,8 +35,6 @@ public class Main {
 			em.addComponent(entity,pos);
 			em.addComponent(entity,r);
 		}
-	
-		
 		
 		while(true){
 			renderSystem.processOneTick(System.nanoTime());

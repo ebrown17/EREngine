@@ -11,16 +11,17 @@ public class GridGraph {
 
 	protected static final int[][] DIRS = {{1,0},{0,1},{-1,0},{0,-1}};
 	protected final int ROWS,COLUMNS;
-	protected final String SEED;
+	protected final Long SEED;
 	
 	protected ArrayList<GridNode> nodeList  = new ArrayList<GridNode>();	
 	protected Random rand;
+	
 	/**
+	 * 
 	 * @param rows number of rows a grid will have
 	 * @param columns number of columns a grid will have
-	 */
-	
-	public GridGraph(int rows, int columns,String seed){
+	 */	
+	public GridGraph(int rows, int columns,Long seed){
 		this.ROWS=rows;
 		this.COLUMNS=columns;
 		this.SEED = seed;
@@ -32,8 +33,7 @@ public class GridGraph {
 	
 	/**
 	 * @return returns list of nodes with edges connected by XY Cartesian coordinates
-	 */
-	
+	 */	
 	public ArrayList<GridNode> getNodeList(){
 		return nodeList;
 	}

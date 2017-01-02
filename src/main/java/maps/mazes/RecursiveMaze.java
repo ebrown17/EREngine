@@ -18,7 +18,7 @@ public class RecursiveMaze extends GridGraph {
 	 * @param columns number of columns a maze will have
 	 */
 	
-	public RecursiveMaze(int rows, int columns,String seed){
+	public RecursiveMaze(int rows, int columns,Long seed){
 		super(rows,columns,seed);
 		long one = System.currentTimeMillis();
 		generateRecursiveMaze();
