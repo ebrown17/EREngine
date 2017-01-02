@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 	private JFrame frame;
 	final double ns = 1000000000.0 / 60;
 	double delta = 0.0;
-	private long previousGameTick, frameTime=0;
+	private long previousGameTick=0, frameTime=0;
 	private EntityManager em;
 	private BufferStrategy buffer;
 	private Graphics2D baseGraphics;
@@ -51,6 +52,10 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 		
+	}
+	
+	public void setMouseListener(MouseMotionListener mML){
+		this.addMouseMotionListener(mML);
 	}
 	
 	@Override
@@ -95,5 +100,8 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 		
 	}
 	
+	public JFrame getRenderFrame(){
+		return frame;
+	}
 
 }

@@ -5,6 +5,7 @@ import graphs.types.GridGraph;
 import managers.EntityManager;
 import managers.MapManager;
 import managers.RandomGeneratorManager;
+import systems.types.InputSystem;
 import systems.types.RenderSystem;
 
 public class Main {
@@ -12,7 +13,7 @@ public class Main {
 	
 	public static void main(String[] args){
 		String seed = "TESTersss";	
-		final int TILESIZE=5;
+		final int TILESIZE=10;
 		final int WIDTH=800,HEIGHT=600;
 		int scaleX=WIDTH/TILESIZE, scaleY=HEIGHT/TILESIZE;
 		
@@ -20,13 +21,17 @@ public class Main {
 		RandomGeneratorManager masterRandom = new RandomGeneratorManager(seed);		
 		MapManager mapManager = new MapManager();
 		
+		InputSystem inputSystem = new InputSystem(em);
+		RenderSystem renderSystem = new RenderSystem(WIDTH,HEIGHT,TILESIZE,em);
 		
-		Long idSeed = masterRandom.getNewSeed();
+		renderSystem.setMouseListener(inputSystem);
 		
+		
+		Long idSeed = masterRandom.getNewSeed();		
 		mapManager.createMazeData(scaleX, scaleY, idSeed);
 		GridGraph maze = mapManager.generateRecMaze(idSeed);
 		
-		RenderSystem renderSystem = new RenderSystem(WIDTH,HEIGHT,TILESIZE,em);		
+			
 		
 		for(GridNode node : maze.getNodeList()){
 			int entity = em.createEntity();
@@ -37,7 +42,13 @@ public class Main {
 		}
 		
 		while(true){
-			renderSystem.processOneTick(System.nanoTime());
+			
+			long currentTick = System.nanoTime();
+			
+			inputSystem.processOneTick(currentTick);
+			
+			renderSystem.processOneTick(currentTick);
+			
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
