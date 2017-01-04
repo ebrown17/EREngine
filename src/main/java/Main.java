@@ -1,3 +1,4 @@
+import components.types.BaseRenderable;
 import components.types.Position;
 import components.types.Renderable;
 import graphs.nodes.GridNode;
@@ -7,6 +8,7 @@ import managers.MapManager;
 import managers.RandomGeneratorManager;
 import systems.types.InputSystem;
 import systems.types.RenderSystem;
+import util.RenderPriority;
 
 public class Main {
 
@@ -36,7 +38,7 @@ public class Main {
 		for(GridNode node : maze.getNodeList()){
 			int entity = em.createEntity();
 			Position pos = new Position(node.postion.x,node.postion.y);
-			Renderable r =  new Renderable(pos,node.tile);
+			Renderable r =  new BaseRenderable(pos,node.tile,RenderPriority.BASE_LAYER);
 			em.addComponent(entity,pos);
 			em.addComponent(entity,r);
 		}

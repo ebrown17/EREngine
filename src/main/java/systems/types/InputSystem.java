@@ -5,11 +5,15 @@ import java.awt.event.MouseMotionListener;
 
 import javax.swing.JFrame;
 
+import components.types.BaseRenderable;
+import components.types.MiddleRenderable;
 import components.types.Position;
 import components.types.Renderable;
+import components.types.TopRenderable;
 import managers.EntityManager;
 import maps.TileType;
 import systems.SystemProcessor;
+import util.RenderPriority;
 
 public class InputSystem implements SystemProcessor,MouseMotionListener{
 	
@@ -31,11 +35,24 @@ public class InputSystem implements SystemProcessor,MouseMotionListener{
 		Renderable r =  new Renderable(pos,TileType.PATH);
 		entityManger.addComponent(entity,pos);
 		entityManger.addComponent(entity,r);*/
-		
+		int entity = entityManger.createEntity();
+		Position pos = new Position(cX/10,cY/10);
+		Renderable r =  new MiddleRenderable(pos,TileType.PATH,RenderPriority.MIDDLE_LAYER);
+		entityManger.addComponent(entity,pos);
+		entityManger.addComponent(entity,r);
+		/*
 		if(lastFrameTick-previousGameTick>2000000000){
 			previousGameTick=lastFrameTick;
 			System.out.println("x: " + cX/10 + " y: " +cY/10 );
-		}
+			
+			int entity = entityManger.createEntity();
+			Position pos = new Position(cX/10,cY/10);
+			Renderable r =  new MiddleRenderable(pos,TileType.PATH,RenderPriority.MIDDLE_LAYER);
+			entityManger.addComponent(entity,pos);
+			entityManger.addComponent(entity,r);
+			
+			
+		}*/
 		
 	}
 

@@ -1,6 +1,7 @@
 package systems.types;
 
 import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -12,10 +13,14 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.PriorityQueue;
 
 import javax.swing.JFrame;
 
+import components.types.BaseRenderable;
+import components.types.MiddleRenderable;
 import components.types.Renderable;
+import components.types.TopRenderable;
 import managers.EntityManager;
 import systems.SystemProcessor;
 
@@ -32,7 +37,10 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 	private BufferStrategy buffer;
 	private Graphics2D baseGraphics;
 	private Graphics2D baseBufferedGraphics;
-	private Collection<Renderable> renderables;
+	private Collection<BaseRenderable> base;
+	private Collection<MiddleRenderable> middle;
+	private Collection<TopRenderable> top;
+	private PriorityQueue<Renderable> testq = new PriorityQueue<Renderable>();
 	private Font fpsFont = new Font("Courier New",Font.PLAIN,12);
 	private BufferedImage baseImage;
 
@@ -65,14 +73,26 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 			createBufferStrategy(2);
 			return;
 		}
-		renderables = em.getAllComponentsOfType(Renderable.class);
+		base = em.getAllComponentsOfType(BaseRenderable.class);
+		middle = em.getAllComponentsOfType(MiddleRenderable.class);
+		top = em.getAllComponentsOfType(TopRenderable.class);
 		
 		// get buffered image to draw to
 		baseGraphics = (Graphics2D) baseImage.getGraphics();
 		
 		baseBufferedGraphics = (Graphics2D) buffer.getDrawGraphics();
-	
-		for(Iterator<Renderable> rendable = renderables.iterator();rendable.hasNext();){
+		
+		for(Iterator<BaseRenderable> rendable = base.iterator();rendable.hasNext();){
+			Renderable rend = rendable.next();
+			baseGraphics.setColor(rend.tile.color);
+			baseGraphics.fillRect(rend.position.x*tileSize, rend.position.y*tileSize, tileSize, tileSize);
+		}
+		for(Iterator<MiddleRenderable> rendable = middle.iterator();rendable.hasNext();){
+			MiddleRenderable rend = rendable.next();
+			baseGraphics.setColor(rend.tile.color);
+			baseGraphics.fillRect(rend.position.x*tileSize, rend.position.y*tileSize, tileSize, tileSize);
+		}
+		for(Iterator<TopRenderable> rendable = top.iterator();rendable.hasNext();){
 			Renderable rend = rendable.next();
 			baseGraphics.setColor(rend.tile.color);
 			baseGraphics.fillRect(rend.position.x*tileSize, rend.position.y*tileSize, tileSize, tileSize);
@@ -86,9 +106,10 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 			fpsAvg=fps;
 			fps=0;
 			frame.setTitle("Testing | " + " FPS: " + fpsAvg );
-		}
-		
-		
+			System.out.println("Base " + base.size());
+			System.out.println("mid " + middle.size());
+			System.out.println("Top " + top.size());
+		}		
 		
 		baseBufferedGraphics.dispose();
 		baseGraphics.dispose();
@@ -96,8 +117,7 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 		baseGraphics = null;
 		buffer.show();		
 		Toolkit.getDefaultToolkit().sync();
-		
-		
+				
 	}
 	
 	public JFrame getRenderFrame(){
