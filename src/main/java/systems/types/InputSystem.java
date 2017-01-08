@@ -23,6 +23,7 @@ public class InputSystem implements SystemProcessor,MouseMotionListener, MouseIn
 	private EntityManager entityManger;
 	private int cX=0, cY=0;
 	private long previousGameTick = 0;
+	private boolean mouseClickedFlag = false;
 	
 	public InputSystem(EntityManager entityManger){
 		this.entityManger = entityManger;
@@ -32,6 +33,19 @@ public class InputSystem implements SystemProcessor,MouseMotionListener, MouseIn
 
 	@Override
 	public void processOneTick(long lastFrameTick) {
+		
+		if(mouseClickedFlag){
+			Collection<Entity> entities = entityManger.getAllEntitiesPossesingComponent(MiddleRenderable.class);
+			
+			for(Entity entity : entities){
+				entityManger.removeActiveEntity(entity);
+			}
+			
+			System.out.println("removed: " +  entities.size());
+			mouseClickedFlag = false;
+		}
+		
+		
 		Collection<MiddleRenderable> middle = entityManger.getAllComponentsOfType(MiddleRenderable.class);
 		for(MiddleRenderable mid : middle){
 			if(mid.position.x == cX/10 && mid.position.y == cY/10 ) return;
@@ -74,13 +88,9 @@ public class InputSystem implements SystemProcessor,MouseMotionListener, MouseIn
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		/*// TODO Auto-generated method stub
-		Collection<MiddleRenderable> middle = entityManger.getComponent(entity, componentType)
+		// TODO Auto-generated method stub
+		mouseClickedFlag = true;
 		
-		for(MiddleRenderable mid : middle){
-			entityManger.killEntity(mid.);
-		}
-		*/
 		
 	}
 

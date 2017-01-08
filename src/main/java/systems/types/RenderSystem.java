@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
@@ -64,6 +65,10 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 	
 	public void setMouseListener(MouseMotionListener mML){
 		this.addMouseMotionListener(mML);
+	}
+	
+	public void setMouseEventListener(MouseListener mML){
+		this.addMouseListener(mML);
 	}
 	
 	@Override

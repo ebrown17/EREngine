@@ -28,7 +28,7 @@ public class Main {
 		RenderSystem renderSystem = new RenderSystem(WIDTH,HEIGHT,TILESIZE,entityManager);
 		
 		renderSystem.setMouseListener(inputSystem);
-		
+		renderSystem.setMouseEventListener(inputSystem);
 		
 		Long idSeed = masterRandom.getNewSeed();		
 		mapManager.createMazeData(scaleX, scaleY, idSeed);
