@@ -1,6 +1,7 @@
 import components.types.BaseRenderable;
 import components.types.Position;
 import components.types.Renderable;
+import entities.Entity;
 import graphs.nodes.GridNode;
 import graphs.types.GridGraph;
 import managers.EntityManager;
@@ -19,12 +20,12 @@ public class Main {
 		final int WIDTH=800,HEIGHT=600;
 		int scaleX=WIDTH/TILESIZE, scaleY=HEIGHT/TILESIZE;
 		
-		EntityManager em = new EntityManager();
+		EntityManager entityManager = new EntityManager();
 		RandomGeneratorManager masterRandom = new RandomGeneratorManager(seed);		
 		MapManager mapManager = new MapManager();
 		
-		InputSystem inputSystem = new InputSystem(em);
-		RenderSystem renderSystem = new RenderSystem(WIDTH,HEIGHT,TILESIZE,em);
+		InputSystem inputSystem = new InputSystem(entityManager);
+		RenderSystem renderSystem = new RenderSystem(WIDTH,HEIGHT,TILESIZE,entityManager);
 		
 		renderSystem.setMouseListener(inputSystem);
 		
@@ -36,11 +37,11 @@ public class Main {
 			
 		
 		for(GridNode node : maze.getNodeList()){
-			int entity = em.createEntity();
+			Entity entity = entityManager.createEntity();
 			Position pos = new Position(node.postion.x,node.postion.y);
 			Renderable r =  new BaseRenderable(pos,node.tile,RenderPriority.BASE_LAYER);
-			em.addComponent(entity,pos);
-			em.addComponent(entity,r);
+			entityManager.addComponent(entity,pos);
+			entityManager.addComponent(entity,r);
 		}
 		
 		while(true){
