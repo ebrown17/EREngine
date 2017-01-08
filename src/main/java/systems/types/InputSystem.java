@@ -24,13 +24,13 @@ public class InputSystem implements SystemProcessor,MouseMotionListener, MouseIn
 	private int cX=0, cY=0;
 	private long previousGameTick = 0;
 	private boolean mouseClickedFlag = false;
+	private final int tileSize;
 	
-	public InputSystem(EntityManager entityManger){
+	public InputSystem(EntityManager entityManger, int tileSize){
 		this.entityManger = entityManger;
-	
+		this.tileSize = tileSize;
 	}
 	
-
 	@Override
 	public void processOneTick(long lastFrameTick) {
 		
@@ -45,29 +45,15 @@ public class InputSystem implements SystemProcessor,MouseMotionListener, MouseIn
 			mouseClickedFlag = false;
 		}
 		
-		
 		Collection<MiddleRenderable> middle = entityManger.getAllComponentsOfType(MiddleRenderable.class);
 		for(MiddleRenderable mid : middle){
-			if(mid.position.x == cX/10 && mid.position.y == cY/10 ) return;
+			if(mid.position.x == cX && mid.position.y == cY ) return;
 		}
 		Entity entity = entityManger.createEntity();
-		Position pos = new Position(cX/10,cY/10);
+		Position pos = new Position(cX,cY);
 		Renderable r =  new MiddleRenderable(pos,TileType.PATH,RenderPriority.MIDDLE_LAYER);
 		entityManger.addComponent(entity,pos);
 		entityManger.addComponent(entity,r);
-		/*
-		if(lastFrameTick-previousGameTick>2000000000){
-			previousGameTick=lastFrameTick;
-			System.out.println("x: " + cX/10 + " y: " +cY/10 );
-			
-			int entity = entityManger.createEntity();
-			Position pos = new Position(cX/10,cY/10);
-			Renderable r =  new MiddleRenderable(pos,TileType.PATH,RenderPriority.MIDDLE_LAYER);
-			entityManger.addComponent(entity,pos);
-			entityManger.addComponent(entity,r);
-			
-			
-		}*/
 		
 	}
 
@@ -81,8 +67,8 @@ public class InputSystem implements SystemProcessor,MouseMotionListener, MouseIn
 	public void mouseMoved(MouseEvent e) {
 		// TODO Auto-generated method stub
 		//System.out.println("event "  );
-		cX = e.getX();
-		cY = e.getY();
+		cX = e.getX()/tileSize;
+		cY = e.getY()/tileSize;
 	}
 
 

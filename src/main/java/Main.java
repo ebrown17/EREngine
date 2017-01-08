@@ -16,7 +16,7 @@ public class Main {
 	
 	public static void main(String[] args){
 		String seed = "TESTersss";	
-		final int TILESIZE=10;
+		final int TILESIZE=5;
 		final int WIDTH=800,HEIGHT=600;
 		int scaleX=WIDTH/TILESIZE, scaleY=HEIGHT/TILESIZE;
 		
@@ -24,7 +24,7 @@ public class Main {
 		RandomGeneratorManager masterRandom = new RandomGeneratorManager(seed);		
 		MapManager mapManager = new MapManager();
 		
-		InputSystem inputSystem = new InputSystem(entityManager);
+		InputSystem inputSystem = new InputSystem(entityManager,TILESIZE);
 		RenderSystem renderSystem = new RenderSystem(WIDTH,HEIGHT,TILESIZE,entityManager);
 		
 		renderSystem.setMouseListener(inputSystem);
@@ -52,12 +52,12 @@ public class Main {
 			
 			renderSystem.processOneTick(currentTick);
 			
-			try {
+			/*try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}*/
 		}
 		
 		
