@@ -4,11 +4,13 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.font.FontRenderContext;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -84,9 +86,7 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 		
 		// get buffered image to draw to
 		baseGraphics = (Graphics2D) baseImage.getGraphics();
-		
-		baseBufferedGraphics = (Graphics2D) buffer.getDrawGraphics();
-		
+					
 		for(Iterator<BaseRenderable> rendable = base.iterator();rendable.hasNext();){
 			Renderable rend = rendable.next();
 			baseGraphics.setColor(rend.tile.color);
@@ -94,7 +94,7 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 		}
 		for(Iterator<MiddleRenderable> rendable = middle.iterator();rendable.hasNext();){
 			MiddleRenderable rend = rendable.next();
-			baseGraphics.setColor(rend.tile.color);
+			baseGraphics.setColor(rend.tile.color);			
 			baseGraphics.fillRect(rend.position.x*tileSize, rend.position.y*tileSize, tileSize, tileSize);
 		}
 		for(Iterator<TopRenderable> rendable = top.iterator();rendable.hasNext();){
@@ -102,7 +102,8 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 			baseGraphics.setColor(rend.tile.color);
 			baseGraphics.fillRect(rend.position.x*tileSize, rend.position.y*tileSize, tileSize, tileSize);
 		}
-		
+
+		baseBufferedGraphics = (Graphics2D) buffer.getDrawGraphics();		
 		baseBufferedGraphics.drawImage(baseImage, 0, 0, null);	
 		
 		fps++;
@@ -111,6 +112,7 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 			fpsAvg=fps;
 			fps=0;
 			frame.setTitle("Testing | " + " FPS: " + fpsAvg );
+			
 			System.out.println("Base " + base.size() + " Mid " + middle.size() + " Top " + top.size());
 			System.out.println(em.getPoolSizes());
 		}		

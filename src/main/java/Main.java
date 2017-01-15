@@ -1,12 +1,14 @@
 import components.types.BaseRenderable;
 import components.types.Position;
 import components.types.Renderable;
+import components.types.TopRenderable;
 import entities.Entity;
 import graphs.nodes.GridNode;
 import graphs.types.GridGraph;
 import managers.EntityManager;
 import managers.MapManager;
 import managers.RandomGeneratorManager;
+import maps.TileType;
 import systems.types.InputSystem;
 import systems.types.RenderSystem;
 import util.RenderPriority;
@@ -16,8 +18,8 @@ public class Main {
 	
 	public static void main(String[] args){
 		String seed = "TESTersss";	
-		final int TILESIZE=15;
-		final int WIDTH=800,HEIGHT=600;
+		final int TILESIZE=16;
+		final int WIDTH=800,HEIGHT=800;
 		int scaleX=WIDTH/TILESIZE, scaleY=HEIGHT/TILESIZE;
 		
 		EntityManager entityManager = new EntityManager();
@@ -39,7 +41,13 @@ public class Main {
 		for(GridNode node : maze.getNodeList()){
 			Entity entity = entityManager.retrieveEntity();
 			Position pos = new Position(node.postion.x,node.postion.y);
-			Renderable r =  new BaseRenderable(pos,node.tile,RenderPriority.BASE_LAYER);
+			Renderable r;
+			if(node.tile == TileType.START || node.tile == TileType.END){
+				r =  new TopRenderable(pos,node.tile,RenderPriority.TOP_LAYER);
+			}
+			else{
+				r =  new BaseRenderable(pos,node.tile,RenderPriority.BASE_LAYER);
+			}
 			entityManager.addComponent(entity,pos);
 			entityManager.addComponent(entity,r);
 		}
@@ -53,7 +61,7 @@ public class Main {
 			renderSystem.processOneTick(currentTick);
 			
 			try {
-				Thread.sleep(0);
+				Thread.sleep(10);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
