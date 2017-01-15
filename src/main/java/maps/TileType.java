@@ -8,7 +8,10 @@ public enum TileType {
 	END("E",Color.RED,false),
 	CLEAR(" ",Color.WHITE,false),
 	PATH("o",Color.CYAN,false),
-	WALL("I",Color.BLACK,true);
+	WALL("I",Color.BLACK,true),
+	BLUE("o",Color.BLUE,false),
+	MAGENTA("o",Color.MAGENTA,false),
+	ORANGE("o",Color.ORANGE,false);
 	
 	public final String chr;
 	public final Color color;
