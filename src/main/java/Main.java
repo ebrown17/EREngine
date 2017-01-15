@@ -16,7 +16,7 @@ public class Main {
 	
 	public static void main(String[] args){
 		String seed = "TESTersss";	
-		final int TILESIZE=5;
+		final int TILESIZE=15;
 		final int WIDTH=800,HEIGHT=600;
 		int scaleX=WIDTH/TILESIZE, scaleY=HEIGHT/TILESIZE;
 		
@@ -37,7 +37,7 @@ public class Main {
 			
 		
 		for(GridNode node : maze.getNodeList()){
-			Entity entity = entityManager.createEntity();
+			Entity entity = entityManager.retrieveEntity();
 			Position pos = new Position(node.postion.x,node.postion.y);
 			Renderable r =  new BaseRenderable(pos,node.tile,RenderPriority.BASE_LAYER);
 			entityManager.addComponent(entity,pos);
@@ -52,12 +52,12 @@ public class Main {
 			
 			renderSystem.processOneTick(currentTick);
 			
-			/*try {
-				Thread.sleep(10);
+			try {
+				Thread.sleep(0);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}*/
+			}
 		}
 		
 		

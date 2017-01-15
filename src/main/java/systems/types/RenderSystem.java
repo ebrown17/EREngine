@@ -111,9 +111,8 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 			fpsAvg=fps;
 			fps=0;
 			frame.setTitle("Testing | " + " FPS: " + fpsAvg );
-			System.out.println("Base " + base.size());
-			System.out.println("mid " + middle.size());
-			System.out.println("Top " + top.size());
+			System.out.println("Base " + base.size() + " Mid " + middle.size() + " Top " + top.size());
+			System.out.println(em.getPoolSizes());
 		}		
 		
 		baseBufferedGraphics.dispose();

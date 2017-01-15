@@ -38,7 +38,7 @@ public class InputSystem implements SystemProcessor,MouseMotionListener, MouseIn
 			Collection<Entity> entities = entityManger.getAllEntitiesPossesingComponent(MiddleRenderable.class);
 			
 			for(Entity entity : entities){
-				entityManger.removeActiveEntity(entity);
+				entityManger.recycleActiveEntity(entity);
 			}
 			
 			System.out.println("removed: " +  entities.size());
@@ -49,9 +49,9 @@ public class InputSystem implements SystemProcessor,MouseMotionListener, MouseIn
 		for(MiddleRenderable mid : middle){
 			if(mid.position.x == cX && mid.position.y == cY ) return;
 		}
-		Entity entity = entityManger.createEntity();
+		Entity entity = entityManger.retrieveEntity();
 		Position pos = new Position(cX,cY);
-		Renderable r =  new MiddleRenderable(pos,TileType.PATH,RenderPriority.MIDDLE_LAYER);
+		Renderable r =  new MiddleRenderable(pos,TileType.MAGENTA,RenderPriority.MIDDLE_LAYER);
 		entityManger.addComponent(entity,pos);
 		entityManger.addComponent(entity,r);
 		
