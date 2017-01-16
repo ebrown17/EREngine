@@ -3,6 +3,7 @@ package managers;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,7 +38,7 @@ public class EntityManager {
 	}
 	
 	public String getPoolSizes(){
-		return "Entity pool: " +entityPool.size() + " entityIdPool size " + entityIdPool.size() + " activeEntities size " + activeEntities.size();
+		return "Entity pool: " +entityPool.size() + " | activeEntities: " + activeEntities.size()+ " | entityIdPools: " + entityIdPool.size();
 	}
 	
 	private void initEntityPool(){
@@ -143,7 +144,7 @@ public class EntityManager {
 			HashMap<Integer, ? extends Component> entitesWithComponent = componentMap.get(componentType);
 
 			if (entitesWithComponent == null)
-				return new LinkedList<T>();
+				return Collections.emptyList();
 			
 			
 			return (Collection<T>) entitesWithComponent.values();

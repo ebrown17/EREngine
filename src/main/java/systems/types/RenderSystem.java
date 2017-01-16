@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -44,7 +45,8 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 	private Collection<MiddleRenderable> middle;
 	private Collection<TopRenderable> top;
 	private PriorityQueue<Renderable> testq = new PriorityQueue<Renderable>();
-	private Font fpsFont = new Font("Courier New",Font.PLAIN,12);
+	private Font fpsFont = new Font("Courier New",Font.BOLD,24);
+	private FontMetrics metrics;
 	private BufferedImage baseImage;
 
 	public RenderSystem(int width,int height,int tileSize,EntityManager em){
@@ -85,8 +87,9 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 		top = em.getAllComponentsOfType(TopRenderable.class);
 		
 		// get buffered image to draw to
-		baseGraphics = (Graphics2D) baseImage.getGraphics();
-					
+		baseGraphics = baseImage.createGraphics();
+		
+		//baseGraphics.clearRect(0, 0, getWidth(), getHeight());			
 		for(Iterator<BaseRenderable> rendable = base.iterator();rendable.hasNext();){
 			Renderable rend = rendable.next();
 			baseGraphics.setColor(rend.tile.color);
@@ -101,9 +104,10 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 			Renderable rend = rendable.next();
 			baseGraphics.setColor(rend.tile.color);
 			baseGraphics.fillRect(rend.position.x*tileSize, rend.position.y*tileSize, tileSize, tileSize);
-		}
-
-		baseBufferedGraphics = (Graphics2D) buffer.getDrawGraphics();		
+		}		
+		
+		baseBufferedGraphics = (Graphics2D) buffer.getDrawGraphics();
+		//baseBufferedGraphics.clearRect(0, 0, getWidth(), getHeight());
 		baseBufferedGraphics.drawImage(baseImage, 0, 0, null);	
 		
 		fps++;
@@ -111,11 +115,11 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 			previousGameTick=lastFrameTick;
 			fpsAvg=fps;
 			fps=0;
-			frame.setTitle("Testing | " + " FPS: " + fpsAvg );
+			frame.setTitle("Testing | " + " FPS: " + fpsAvg + " | " + em.getPoolSizes());			
 			
-			System.out.println("Base " + base.size() + " Mid " + middle.size() + " Top " + top.size());
-			System.out.println(em.getPoolSizes());
-		}		
+		}
+		
+		
 		
 		baseBufferedGraphics.dispose();
 		baseGraphics.dispose();
