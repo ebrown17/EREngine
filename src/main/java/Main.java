@@ -68,20 +68,5 @@ public class Main {
 			}
 		}
 		
-		
-		/*EntityManager em = new EntityManager();
-		
-		for(int i=0; i < 5; i++){
-			for(int j=0;j<5; j++) {
-				int entity = em.createEntity();				
-				em.addComponent(entity, new Position(i,j));
-			}			
-		}
-		
-		for(int entity: em.entities){
-			
-			System.out.println((em.getComponent(entity, Position.class)).x + " " + (em.getComponent(entity, Position.class)).y);
-		}*/
-		
 	}
 }
