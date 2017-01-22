@@ -41,7 +41,7 @@ public class InputSystem implements SystemProcessor,MouseMotionListener, MouseIn
 			int removed =0;
 			for(Entity entity : entities){
 				Renderable rend = entityManger.getComponent(entity, Renderable.class);
-				if(rend.priority == RenderPriority.MIDDLE_LAYER.getPriority()){
+				if(rend.priority == RenderPriority.MIDDLE_LAYER){
 					entityManger.recycleActiveEntity(entity);
 					removed++;
 				}
@@ -56,7 +56,7 @@ public class InputSystem implements SystemProcessor,MouseMotionListener, MouseIn
 		
 		
 		for(Renderable mid : middle){
-			if(mid.priority  == RenderPriority.MIDDLE_LAYER.getPriority() && mid.position.x == cX && mid.position.y == cY ) return;
+			if(mid.priority  == RenderPriority.MIDDLE_LAYER && mid.position.x == cX && mid.position.y == cY ) return;
 		}
 		Entity entity = entityManger.retrieveEntity();
 		Position pos = new Position(cX,cY);

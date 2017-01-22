@@ -8,12 +8,12 @@ public class Renderable implements Component,Comparable<Renderable>{
 
 	public Position position;
 	public TileType tile;
-	public int priority;
+	public RenderPriority priority;
 	
 	public Renderable(Position position,TileType tile,RenderPriority priority){
 		this.position=position;
 		this.tile = tile;
-		this.priority=priority.getPriority();
+		this.priority=priority;
 	}
 
 	/*@Override 
@@ -24,9 +24,9 @@ public class Renderable implements Component,Comparable<Renderable>{
 	}*/
 	@Override
 	public int compareTo(Renderable o) {
-		if (priority < o.priority)
+		if (priority.priority < o.priority.priority)
 			return -1;
-		if (priority > o.priority)
+		if (priority.priority > o.priority.priority)
 			return 1;
 		else
 			return (this.hashCode() - o.hashCode());

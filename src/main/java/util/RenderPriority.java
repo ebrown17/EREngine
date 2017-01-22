@@ -5,13 +5,10 @@ public enum RenderPriority {
 	MIDDLE_LAYER(2),
 	TOP_LAYER(3);
 	
-	private int priority;
+	public int priority;
 	
 	RenderPriority(int priority){
 		this.priority=priority;
 	}
-
-	public int getPriority(){
-		return priority;
-	}
+	
 }
