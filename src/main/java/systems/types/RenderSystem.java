@@ -10,6 +10,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.PriorityQueue;
 import java.util.Set;
@@ -17,6 +18,7 @@ import java.util.TreeSet;
 
 import javax.swing.JFrame;
 
+import components.Component;
 import components.types.BaseRenderable;
 import components.types.MiddleRenderable;
 import components.types.Renderable;
@@ -30,17 +32,14 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 	private int width,height,tileSize;
 	private long fps=0,fpsAvg=0;
 	private JFrame frame;
-	final double ns = 1000000000.0 / 60;
-	double delta = 0.0;
-	private long previousGameTick=0, frameTime=0;
+	private final long SECOND_IN_NANOTIME = 1000000000;
+	private long previousGameTick=0;
 	private EntityManager em;
 	private BufferStrategy buffer;
 	private Graphics2D baseGraphics;
 	private Graphics2D baseBufferedGraphics;
-	private Collection<BaseRenderable> base;
-	private Collection<MiddleRenderable> middle;
-	private Collection<TopRenderable> top;
-	private Set<Renderable> testq ;
+	private ArrayList<Class<? extends Renderable>> renderLayers;
+	
 	private Font fpsFont = new Font("Courier New",Font.BOLD,24);
 	private FontMetrics metrics;
 	private BufferedImage baseImage;
@@ -52,6 +51,10 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 		this.em = em;
 		this.baseImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		setPreferredSize(new Dimension(width,height));
+		renderLayers = new ArrayList<Class<? extends Renderable>>();
+		renderLayers.add(BaseRenderable.class);
+		renderLayers.add(MiddleRenderable.class);
+		renderLayers.add(TopRenderable.class);
 		frame = new JFrame();
 		frame.setResizable(false);
 		frame.setTitle("Testing");
@@ -78,48 +81,31 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 			createBufferStrategy(2);
 			return;
 		}
-		
 			
 		// get buffered image to draw to
 		baseGraphics = baseImage.createGraphics();
-		
+		// clears image
 		baseGraphics.clearRect(0, 0, getWidth(), getHeight());
 		
-		testq = em.getAllRenderComponents();
-		for(Renderable rend : testq){
-			baseGraphics.setColor(rend.tile.color);
-			baseGraphics.fillRect(rend.position.x*tileSize, rend.position.y*tileSize, tileSize, tileSize);
-		}
-		/*for(Iterator<Renderable> rendable = testq.iterator();rendable.hasNext();){
-			Renderable rend = rendable.next();
-			baseGraphics.setColor(rend.tile.color);
-			baseGraphics.fillRect(rend.position.x*tileSize, rend.position.y*tileSize, tileSize, tileSize);
-		}*/
-	/*	for(Iterator<MiddleRenderable> rendable = middle.iterator();rendable.hasNext();){
-			MiddleRenderable rend = rendable.next();
-			baseGraphics.setColor(rend.tile.color);			
-			baseGraphics.fillRect(rend.position.x*tileSize, rend.position.y*tileSize, tileSize, tileSize);
-		}
-		for(Iterator<TopRenderable> rendable = top.iterator();rendable.hasNext();){
-			Renderable rend = rendable.next();
-			baseGraphics.setColor(rend.tile.color);
-			baseGraphics.fillRect(rend.position.x*tileSize, rend.position.y*tileSize, tileSize, tileSize);
-		}	*/	
+		for(Class<? extends Renderable> tester: renderLayers){
+			Collection<? extends Renderable> renderLayer = em.getAllComponentsOfType(tester);
+			for(Renderable rend : renderLayer){
+				baseGraphics.setColor(rend.tile.color);
+				baseGraphics.fillRect(rend.position.x*tileSize, rend.position.y*tileSize, tileSize, tileSize);
+			}
+		}	
 		
 		baseBufferedGraphics = (Graphics2D) buffer.getDrawGraphics();
-		//baseBufferedGraphics.clearRect(0, 0, getWidth(), getHeight());
 		baseBufferedGraphics.drawImage(baseImage, 0, 0, null);	
 		
 		fps++;
-		if(lastFrameTick-previousGameTick>1000000000){
+		if(lastFrameTick-previousGameTick>SECOND_IN_NANOTIME){
 			previousGameTick=lastFrameTick;
 			fpsAvg=fps;
 			fps=0;
 			frame.setTitle("Testing | " + " FPS: " + fpsAvg + " | " + em.getPoolSizes());			
 			
 		}
-		
-		
 		
 		baseBufferedGraphics.dispose();
 		baseGraphics.dispose();
@@ -128,10 +114,6 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 		buffer.show();		
 		Toolkit.getDefaultToolkit().sync();
 				
-	}
-	
-	public JFrame getRenderFrame(){
-		return frame;
 	}
 
 }

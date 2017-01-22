@@ -24,7 +24,6 @@ public class InputSystem implements SystemProcessor,MouseMotionListener, MouseIn
 	
 	private EntityManager entityManger;
 	private int cX=0, cY=0;
-	private long previousGameTick = 0;
 	private boolean mouseClickedFlag = false;
 	private final int tileSize;
 	
@@ -37,30 +36,28 @@ public class InputSystem implements SystemProcessor,MouseMotionListener, MouseIn
 	public void processOneTick(long lastFrameTick) {
 		
 		if(mouseClickedFlag){
-			Collection<Entity> entities = entityManger.getAllEntitiesPossesingComponent(Renderable.class);
+			Collection<Entity> entities = entityManger.getAllEntitiesPossesingComponent(MiddleRenderable.class);
 			int removed =0;
 			for(Entity entity : entities){
-				Renderable rend = entityManger.getComponent(entity, Renderable.class);
+				Renderable rend = entityManger.getComponent(entity, MiddleRenderable.class);
 				if(rend.priority == RenderPriority.MIDDLE_LAYER){
 					entityManger.recycleActiveEntity(entity);
 					removed++;
 				}
-				
 			}
 			
 			System.out.println("removed: " +  removed);
 			mouseClickedFlag = false;
 		}
 		
-		TreeSet<Renderable> middle = entityManger.getAllRenderComponents();
-		
+		Collection<MiddleRenderable> middle = entityManger.getAllComponentsOfType(MiddleRenderable.class);
 		
 		for(Renderable mid : middle){
-			if(mid.priority  == RenderPriority.MIDDLE_LAYER && mid.position.x == cX && mid.position.y == cY ) return;
+			if(mid.position.x == cX && mid.position.y == cY ) return;
 		}
 		Entity entity = entityManger.retrieveEntity();
 		Position pos = new Position(cX,cY);
-		Renderable r =  new Renderable(pos,TileType.MAGENTA,RenderPriority.MIDDLE_LAYER);
+		Renderable r =  new MiddleRenderable(pos,TileType.MAGENTA,RenderPriority.MIDDLE_LAYER);
 		entityManger.addComponent(entity,pos);
 		entityManger.addComponent(entity,r);
 		

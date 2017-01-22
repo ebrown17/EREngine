@@ -43,10 +43,10 @@ public class Main {
 			Position pos = new Position(node.postion.x,node.postion.y);
 			Renderable r;
 			if(node.tile == TileType.START || node.tile == TileType.END){
-				r =  new Renderable(pos,node.tile,RenderPriority.TOP_LAYER);
+				r =  new TopRenderable(pos,node.tile,RenderPriority.TOP_LAYER);
 			}
 			else{
-				r =  new Renderable(pos,node.tile,RenderPriority.BASE_LAYER);
+				r =  new BaseRenderable(pos,node.tile,RenderPriority.BASE_LAYER);
 			}
 			entityManager.addComponent(entity,pos);
 			entityManager.addComponent(entity,r);

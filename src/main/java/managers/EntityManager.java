@@ -23,25 +23,18 @@ public class EntityManager {
 	private List<Entity> activeEntities;
 	private ArrayDeque<Entity> entityPool;
 	private List<Integer> entityIdPool;
-	private PriorityQueue<Renderable> test;
-	private TreeSet<Renderable> testSet;
+	
 	/*
 	 * Map of Components with map of entity id's that contain an instance of this component  
 	 */
-	HashMap<Class<?>,HashMap<Integer, ? extends Component>> componentMap;
-	
-	HashMap<Class<?>,HashMap<? extends Component, Entity>> entityMap;
+	private HashMap<Class<?>,HashMap<Integer, ? extends Component>> componentMap;
 	
 	public EntityManager(){
-		
 		activeEntities = new ArrayList<Entity>(INTIAL_POOL_SIZE);
 		entityPool = new ArrayDeque<Entity>(INTIAL_POOL_SIZE);
 		entityIdPool = new ArrayList<Integer>(INTIAL_POOL_SIZE);
-		test = new PriorityQueue<Renderable>();
-		testSet = new TreeSet<Renderable>();
 		componentMap = new HashMap<Class<?>,HashMap<Integer, ? extends Component>>();
 		initEntityPool();
-		
 	}
 	
 	public String getPoolSizes(){
@@ -96,7 +89,10 @@ public class EntityManager {
 		}
 		throw new Error("Exception: Entity pool can't be filled.");
 	}
-	
+	/*
+	 * Creates and returns one entity without using entity pool
+	 */
+	@Deprecated
 	private Entity createEntity(){
 		if(lowestUnassingedID < Integer.MAX_VALUE){
 			entityIdPool.add(lowestUnassingedID);
@@ -121,8 +117,6 @@ public class EntityManager {
 		entityPool.add(entity);
 		for( HashMap<Integer, ? extends Component> store : componentMap.values() )
 		{
-			Component comp = store.get(entity.getId());
-			if(comp instanceof Renderable){ testSet.remove(comp);}
 			store.remove(entity.getId());
 		}
 	}
@@ -156,33 +150,10 @@ public class EntityManager {
 			if (entitesWithComponent == null)
 				return Collections.emptyList();
 			
-			
 			return (Collection<T>) entitesWithComponent.values();
 		
 	}
 	
-	public <T extends Renderable> TreeSet<Renderable> getAllRenderComponents(){
-		
-		HashMap<Integer, ? extends Component> entitesWithComponent = componentMap.get(Renderable.class);
-
-		if (entitesWithComponent == null)
-			return null;
-		
-	/*	
-		for( Component comp  :(Collection<T>) entitesWithComponent.values()){
-			test.add((Renderable) comp);
-		}
-		*/
-		/*for( Component comp  :(Collection<T>) entitesWithComponent.values()){
-			testSet.add((Renderable) comp);
-		}*/
-		//(Collection<T>) entitesWithComponent.values()
-		testSet.addAll((Collection<? extends Renderable>) entitesWithComponent.values());
-		return testSet ;
-	
-	}
-	
-
 	public <T extends Component> Collection<Entity> getAllEntitiesPossesingComponent(Class<T> componentType){
 		
 		HashMap<Integer, ? extends Component> entitesWithComponent = componentMap.get(componentType);
@@ -202,6 +173,5 @@ public class EntityManager {
 		}
 		return entities;
 	}
-	
 	
 }

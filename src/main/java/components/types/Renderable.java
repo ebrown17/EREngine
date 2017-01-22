@@ -4,7 +4,7 @@ import components.Component;
 import maps.TileType;
 import util.RenderPriority;
 
-public class Renderable implements Component,Comparable<Renderable>{
+public abstract class Renderable implements Component,Comparable<Renderable>{
 
 	public Position position;
 	public TileType tile;
