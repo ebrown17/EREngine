@@ -7,8 +7,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Set;
+import java.util.TreeSet;
 
 import components.Component;
+import components.types.Renderable;
 import entities.Entity;
 
 public class EntityManager {
@@ -19,7 +23,8 @@ public class EntityManager {
 	private List<Entity> activeEntities;
 	private ArrayDeque<Entity> entityPool;
 	private List<Integer> entityIdPool;
-	
+	private PriorityQueue<Renderable> test;
+	private TreeSet<Renderable> testSet;
 	/*
 	 * Map of Components with map of entity id's that contain an instance of this component  
 	 */
@@ -32,6 +37,8 @@ public class EntityManager {
 		activeEntities = new ArrayList<Entity>(INTIAL_POOL_SIZE);
 		entityPool = new ArrayDeque<Entity>(INTIAL_POOL_SIZE);
 		entityIdPool = new ArrayList<Integer>(INTIAL_POOL_SIZE);
+		test = new PriorityQueue<Renderable>();
+		testSet = new TreeSet<Renderable>();
 		componentMap = new HashMap<Class<?>,HashMap<Integer, ? extends Component>>();
 		initEntityPool();
 		
@@ -114,6 +121,8 @@ public class EntityManager {
 		entityPool.add(entity);
 		for( HashMap<Integer, ? extends Component> store : componentMap.values() )
 		{
+			Component comp = store.get(entity.getId());
+			if(comp instanceof Renderable){ testSet.remove(comp);}
 			store.remove(entity.getId());
 		}
 	}
@@ -124,6 +133,7 @@ public class EntityManager {
 			entitesWithComponent = new HashMap<Integer,T>();
 			componentMap.put(component.getClass(), entitesWithComponent);
 		}
+		
 		((HashMap<Integer,T>)entitesWithComponent).put(entity.getId(), component);
 		
 	}
@@ -150,6 +160,28 @@ public class EntityManager {
 			return (Collection<T>) entitesWithComponent.values();
 		
 	}
+	
+	public <T extends Renderable> TreeSet<Renderable> getAllRenderComponents(){
+		
+		HashMap<Integer, ? extends Component> entitesWithComponent = componentMap.get(Renderable.class);
+
+		if (entitesWithComponent == null)
+			return null;
+		
+	/*	
+		for( Component comp  :(Collection<T>) entitesWithComponent.values()){
+			test.add((Renderable) comp);
+		}
+		*/
+		/*for( Component comp  :(Collection<T>) entitesWithComponent.values()){
+			testSet.add((Renderable) comp);
+		}*/
+		//(Collection<T>) entitesWithComponent.values()
+		testSet.addAll((Collection<? extends Renderable>) entitesWithComponent.values());
+		return testSet ;
+	
+	}
+	
 
 	public <T extends Component> Collection<Entity> getAllEntitiesPossesingComponent(Class<T> componentType){
 		

@@ -1,23 +1,19 @@
 package systems.types;
 
 import java.awt.Canvas;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.font.FontRenderContext;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.PriorityQueue;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.JFrame;
 
@@ -44,7 +40,7 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 	private Collection<BaseRenderable> base;
 	private Collection<MiddleRenderable> middle;
 	private Collection<TopRenderable> top;
-	private PriorityQueue<Renderable> testq = new PriorityQueue<Renderable>();
+	private Set<Renderable> testq ;
 	private Font fpsFont = new Font("Courier New",Font.BOLD,24);
 	private FontMetrics metrics;
 	private BufferedImage baseImage;
@@ -82,20 +78,24 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 			createBufferStrategy(2);
 			return;
 		}
-		base = em.getAllComponentsOfType(BaseRenderable.class);
-		middle = em.getAllComponentsOfType(MiddleRenderable.class);
-		top = em.getAllComponentsOfType(TopRenderable.class);
 		
+			
 		// get buffered image to draw to
 		baseGraphics = baseImage.createGraphics();
 		
-		//baseGraphics.clearRect(0, 0, getWidth(), getHeight());			
-		for(Iterator<BaseRenderable> rendable = base.iterator();rendable.hasNext();){
-			Renderable rend = rendable.next();
+		baseGraphics.clearRect(0, 0, getWidth(), getHeight());
+		
+		testq = em.getAllRenderComponents();
+		for(Renderable rend : testq){
 			baseGraphics.setColor(rend.tile.color);
 			baseGraphics.fillRect(rend.position.x*tileSize, rend.position.y*tileSize, tileSize, tileSize);
 		}
-		for(Iterator<MiddleRenderable> rendable = middle.iterator();rendable.hasNext();){
+		/*for(Iterator<Renderable> rendable = testq.iterator();rendable.hasNext();){
+			Renderable rend = rendable.next();
+			baseGraphics.setColor(rend.tile.color);
+			baseGraphics.fillRect(rend.position.x*tileSize, rend.position.y*tileSize, tileSize, tileSize);
+		}*/
+	/*	for(Iterator<MiddleRenderable> rendable = middle.iterator();rendable.hasNext();){
 			MiddleRenderable rend = rendable.next();
 			baseGraphics.setColor(rend.tile.color);			
 			baseGraphics.fillRect(rend.position.x*tileSize, rend.position.y*tileSize, tileSize, tileSize);
@@ -104,7 +104,7 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 			Renderable rend = rendable.next();
 			baseGraphics.setColor(rend.tile.color);
 			baseGraphics.fillRect(rend.position.x*tileSize, rend.position.y*tileSize, tileSize, tileSize);
-		}		
+		}	*/	
 		
 		baseBufferedGraphics = (Graphics2D) buffer.getDrawGraphics();
 		//baseBufferedGraphics.clearRect(0, 0, getWidth(), getHeight());

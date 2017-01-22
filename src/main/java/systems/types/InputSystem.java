@@ -3,6 +3,8 @@ package systems.types;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.util.Collection;
+import java.util.PriorityQueue;
+import java.util.TreeSet;
 
 import javax.swing.JFrame;
 import javax.swing.event.MouseInputListener;
@@ -35,23 +37,30 @@ public class InputSystem implements SystemProcessor,MouseMotionListener, MouseIn
 	public void processOneTick(long lastFrameTick) {
 		
 		if(mouseClickedFlag){
-			Collection<Entity> entities = entityManger.getAllEntitiesPossesingComponent(MiddleRenderable.class);
-			
+			Collection<Entity> entities = entityManger.getAllEntitiesPossesingComponent(Renderable.class);
+			int removed =0;
 			for(Entity entity : entities){
-				entityManger.recycleActiveEntity(entity);
+				Renderable rend = entityManger.getComponent(entity, Renderable.class);
+				if(rend.priority == RenderPriority.MIDDLE_LAYER.getPriority()){
+					entityManger.recycleActiveEntity(entity);
+					removed++;
+				}
+				
 			}
 			
-			System.out.println("removed: " +  entities.size());
+			System.out.println("removed: " +  removed);
 			mouseClickedFlag = false;
 		}
 		
-		Collection<MiddleRenderable> middle = entityManger.getAllComponentsOfType(MiddleRenderable.class);
-		for(MiddleRenderable mid : middle){
-			if(mid.position.x == cX && mid.position.y == cY ) return;
+		TreeSet<Renderable> middle = entityManger.getAllRenderComponents();
+		
+		
+		for(Renderable mid : middle){
+			if(mid.priority  == RenderPriority.MIDDLE_LAYER.getPriority() && mid.position.x == cX && mid.position.y == cY ) return;
 		}
 		Entity entity = entityManger.retrieveEntity();
 		Position pos = new Position(cX,cY);
-		Renderable r =  new MiddleRenderable(pos,TileType.MAGENTA,RenderPriority.MIDDLE_LAYER);
+		Renderable r =  new Renderable(pos,TileType.MAGENTA,RenderPriority.MIDDLE_LAYER);
 		entityManger.addComponent(entity,pos);
 		entityManger.addComponent(entity,r);
 		
