@@ -91,6 +91,7 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 			Collection<? extends Renderable> renderLayer = em.getAllComponentsOfType(renderableClass);
 			for(Renderable r : renderLayer){
 				baseGraphics.setColor(r.tile.color);
+				//TODO add logic to decide correct bit shifting
 				baseGraphics.fillRect(r.position.x << BITSHIFT, r.position.y << BITSHIFT, tileSize, tileSize);
 			}
 		}	
