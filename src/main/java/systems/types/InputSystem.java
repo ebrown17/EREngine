@@ -40,10 +40,9 @@ public class InputSystem implements SystemProcessor,MouseMotionListener, MouseIn
 			int removed =0;
 			for(Entity entity : entities){
 				Renderable rend = entityManger.getComponent(entity, MiddleRenderable.class);
-				if(rend.priority == RenderPriority.MIDDLE_LAYER){
 					entityManger.recycleActiveEntity(entity);
 					removed++;
-				}
+				
 			}
 			
 			System.out.println("removed: " +  removed);
@@ -55,9 +54,14 @@ public class InputSystem implements SystemProcessor,MouseMotionListener, MouseIn
 		for(Renderable mid : middle){
 			if(mid.position.x == cX && mid.position.y == cY ) return;
 		}
+		Collection<BaseRenderable> base = entityManger.getAllComponentsOfType(BaseRenderable.class);
+		
+		for(Renderable b : base){
+			if(b.position.x == cX && b.position.y == cY && b.tile.solid ) return;
+		}
 		Entity entity = entityManger.retrieveEntity();
 		Position pos = new Position(cX,cY);
-		Renderable r =  new MiddleRenderable(pos,TileType.MAGENTA,RenderPriority.MIDDLE_LAYER);
+		Renderable r =  new MiddleRenderable(pos,TileType.MAGENTA);
 		entityManger.addComponent(entity,pos);
 		entityManger.addComponent(entity,r);
 		
