@@ -2,34 +2,14 @@ package components.types;
 
 import components.Component;
 import maps.TileType;
-import util.RenderPriority;
 
-public abstract class Renderable implements Component,Comparable<Renderable>{
+public abstract class Renderable implements Component{
 
 	public Position position;
 	public TileType tile;
-	public RenderPriority priority;
 	
-	public Renderable(Position position,TileType tile,RenderPriority priority){
+	public Renderable(Position position,TileType tile){
 		this.position=position;
-		this.tile = tile;
-		this.priority=priority;
+		this.tile = tile;		
 	}
-
-	/*@Override 
-	public boolean equals(Object o){
-		if(o == this) return true;
-		if(!(o instanceof Renderable )) return false;
-		return false;
-	}*/
-	@Override
-	public int compareTo(Renderable o) {
-		if (priority.priority < o.priority.priority)
-			return -1;
-		if (priority.priority > o.priority.priority)
-			return 1;
-		else
-			return (this.hashCode() - o.hashCode());
-	}
-	
 }

@@ -12,6 +12,7 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.TreeSet;
@@ -25,6 +26,7 @@ import components.types.Renderable;
 import components.types.TopRenderable;
 import managers.EntityManager;
 import systems.SystemProcessor;
+import util.RenderPriority;
 
 public class RenderSystem extends Canvas implements SystemProcessor{
 
@@ -38,7 +40,7 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 	private BufferStrategy buffer;
 	private Graphics2D baseGraphics;
 	private Graphics2D baseBufferedGraphics;
-	private ArrayList<Class<? extends Renderable>> renderLayers;
+	private final int BITSHIFT;
 	
 	private Font fpsFont = new Font("Courier New",Font.BOLD,24);
 	private FontMetrics metrics;
@@ -47,14 +49,11 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 	public RenderSystem(int width,int height,int tileSize,EntityManager em){
 		this.width=width;
 		this.height=height;
-		this.tileSize=tileSize;		
+		this.tileSize=tileSize;
+		this.BITSHIFT = tileSize/4;
 		this.em = em;
 		this.baseImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		setPreferredSize(new Dimension(width,height));
-		renderLayers = new ArrayList<Class<? extends Renderable>>();
-		renderLayers.add(BaseRenderable.class);
-		renderLayers.add(MiddleRenderable.class);
-		renderLayers.add(TopRenderable.class);
 		frame = new JFrame();
 		frame.setResizable(false);
 		frame.setTitle("Testing");
@@ -84,14 +83,15 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 			
 		// get buffered image to draw to
 		baseGraphics = baseImage.createGraphics();
+		
 		// clears image
 		baseGraphics.clearRect(0, 0, getWidth(), getHeight());
-		
-		for(Class<? extends Renderable> tester: renderLayers){
-			Collection<? extends Renderable> renderLayer = em.getAllComponentsOfType(tester);
-			for(Renderable rend : renderLayer){
-				baseGraphics.setColor(rend.tile.color);
-				baseGraphics.fillRect(rend.position.x*tileSize, rend.position.y*tileSize, tileSize, tileSize);
+				
+		for(Class<? extends Renderable> renderableClass: RenderPriority.INSTANCE.getRenderLayers()){
+			Collection<? extends Renderable> renderLayer = em.getAllComponentsOfType(renderableClass);
+			for(Renderable r : renderLayer){
+				baseGraphics.setColor(r.tile.color);
+				baseGraphics.fillRect(r.position.x << BITSHIFT, r.position.y << BITSHIFT, tileSize, tileSize);
 			}
 		}	
 		
