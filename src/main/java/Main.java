@@ -6,6 +6,7 @@ import entities.Entity;
 import graphs.nodes.GridNode;
 import graphs.types.GridGraph;
 import managers.EntityManager;
+import managers.FontManager;
 import managers.MapManager;
 import managers.RandomGeneratorManager;
 import maps.TileType;
@@ -21,6 +22,7 @@ public class Main {
 		final int TILESIZE=16;
 		final int WIDTH=800,HEIGHT=800;
 		int scaleX=WIDTH/TILESIZE, scaleY=HEIGHT/TILESIZE;
+		
 		
 		EntityManager entityManager = new EntityManager();
 		RandomGeneratorManager masterRandom = new RandomGeneratorManager(seed);		
