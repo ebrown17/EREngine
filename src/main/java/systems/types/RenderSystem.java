@@ -16,6 +16,7 @@ import java.util.Collection;
 
 import javax.swing.JFrame;
 
+import components.types.MiddleRenderable;
 import components.types.Renderable;
 import managers.EntityManager;
 import managers.FontManager;
@@ -36,7 +37,7 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 	private Graphics2D baseBufferedGraphics;
 	private final int BITSHIFT;
 	
-	private Font fpsFont = new Font("Arial",Font.PLAIN,12);
+	private Font fpsFont = new Font("Arial",Font.BOLD,12);
 	private FontMetrics metrics;
 	private BufferedImage baseImage;
 
@@ -85,11 +86,38 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 			Collection<? extends Renderable> renderLayer = em.getAllComponentsOfType(renderableClass);
 			for(Renderable r : renderLayer){
 				baseGraphics.setColor(r.tile.color);
-				//TODO add logic to decide correct bit shifting
-				baseGraphics.fillRect(r.position.x << BITSHIFT, r.position.y << BITSHIFT, tileSize, tileSize);
-				
+				if (r instanceof MiddleRenderable){
+					baseGraphics.drawRect(r.position.x << BITSHIFT, r.position.y << BITSHIFT, tileSize, tileSize);
+				}
+				else{
+					//TODO add logic to decide correct bit shifting
+					baseGraphics.fillRect(r.position.x << BITSHIFT, r.position.y << BITSHIFT, tileSize, tileSize);
+				}
 			}
 		}	
+		
+		setFontDetails(baseGraphics);
+		baseBufferedGraphics = (Graphics2D) buffer.getDrawGraphics();
+		baseBufferedGraphics.drawImage(baseImage, 0, 0, null);	
+		
+		fps++;
+		if(lastFrameTick-previousGameTick>SECOND_IN_NANOTIME){
+			previousGameTick=lastFrameTick;
+			fpsAvg=fps;
+			fps=0;
+			//frame.setTitle("FPS: " +fpsAvg );			
+		}
+		
+		baseBufferedGraphics.dispose();
+		baseGraphics.dispose();
+		baseBufferedGraphics = null;
+		baseGraphics = null;
+		buffer.show();		
+		Toolkit.getDefaultToolkit().sync();
+				
+	}
+	
+	private void setFontDetails(Graphics2D baseGraphics){
 		baseGraphics.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_DEFAULT);
         baseGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         baseGraphics.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
@@ -100,28 +128,7 @@ public class RenderSystem extends Canvas implements SystemProcessor{
         baseGraphics.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
         baseGraphics.setFont(fpsFont);        
         baseGraphics.setColor(Color.RED);
-        baseGraphics.drawString(" FPS: " + fpsAvg + "\n " + em.getPoolSizes(), 0, height-1);
-		
-		//baseGraphics.drawImage(fontImage,64,64,null);
-		baseBufferedGraphics = (Graphics2D) buffer.getDrawGraphics();
-		baseBufferedGraphics.drawImage(baseImage, 0, 0, null);	
-		
-		fps++;
-		if(lastFrameTick-previousGameTick>SECOND_IN_NANOTIME){
-			previousGameTick=lastFrameTick;
-			fpsAvg=fps;
-			fps=0;
-			frame.setTitle("Testing " +fpsAvg );			
-			
-		}
-		
-		baseBufferedGraphics.dispose();
-		baseGraphics.dispose();
-		baseBufferedGraphics = null;
-		baseGraphics = null;
-		buffer.show();		
-		Toolkit.getDefaultToolkit().sync();
-				
+        baseGraphics.drawString(" FPS: " + fpsAvg + " | " + em.getPoolSizes(), 0, height-1);
 	}
 
 }

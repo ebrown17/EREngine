@@ -49,8 +49,16 @@ public class InputSystem implements SystemProcessor,MouseMotionListener, MouseIn
 			mouseClickedFlag = false;
 		}
 		
-		Collection<MiddleRenderable> middle = entityManger.getAllComponentsOfType(MiddleRenderable.class);
+		Collection<Entity> entities = entityManger.getAllEntitiesPossesingComponent(MiddleRenderable.class);
+		int removed =0;
+		for(Entity entity : entities){
+			Renderable rend = entityManger.getComponent(entity, MiddleRenderable.class);
+				entityManger.recycleActiveEntity(entity);
+				removed++;
+			
+		}
 		
+		Collection<MiddleRenderable> middle = entityManger.getAllComponentsOfType(MiddleRenderable.class);
 		for(Renderable mid : middle){
 			if(mid.position.x == cX && mid.position.y == cY ) return;
 		}
