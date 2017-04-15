@@ -35,7 +35,8 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 	private BufferStrategy buffer;
 	private Graphics2D baseGraphics;
 	private Graphics2D baseBufferedGraphics;
-	private final int BITSHIFT;
+	private int bitShift =0;
+	private boolean bitShiftable = false;
 	
 	private Font fpsFont = new Font("Arial",Font.BOLD,12);
 	private FontMetrics metrics;
@@ -45,7 +46,9 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 		this.width=width;
 		this.height=height;
 		this.tileSize=tileSize;
-		this.BITSHIFT = tileSize/4;
+		setTileRenderOffset(tileSize);
+		bitShiftable = setTileRenderOffset(tileSize);
+		//this.BITSHIFT = tileSize/4;
 		this.em = em;
 		this.baseImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		setPreferredSize(new Dimension(width,height));
@@ -57,7 +60,6 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
-		
 	}
 	
 	public void setMouseListener(MouseMotionListener mML){
@@ -81,20 +83,38 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 		
 		// clears image
 		baseGraphics.clearRect(0, 0, getWidth(), getHeight());
-				
-		for(Class<? extends Renderable> renderableClass: RenderPriority.INSTANCE.getRenderLayers()){
-			Collection<? extends Renderable> renderLayer = em.getAllComponentsOfType(renderableClass);
-			for(Renderable r : renderLayer){
-				baseGraphics.setColor(r.tile.color);
-				if (r instanceof MiddleRenderable){
-					baseGraphics.drawRect(r.position.x << BITSHIFT, r.position.y << BITSHIFT, tileSize, tileSize);
-				}
-				else{
-					//TODO add logic to decide correct bit shifting
-					baseGraphics.fillRect(r.position.x << BITSHIFT, r.position.y << BITSHIFT, tileSize, tileSize);
+		
+		
+		// use multiplication or use bitshifting to determine render postion
+		
+		if(bitShiftable){
+			for(Class<? extends Renderable> renderableClass: RenderPriority.INSTANCE.getRenderLayers()){
+				Collection<? extends Renderable> renderLayer = em.getAllComponentsOfType(renderableClass);
+				for(Renderable r : renderLayer){
+					baseGraphics.setColor(r.tile.color);
+					if (r instanceof MiddleRenderable){
+						baseGraphics.drawRect(r.position.x << bitShift, r.position.y << bitShift, tileSize, tileSize);
+					}
+					else{
+						baseGraphics.fillRect(r.position.x << bitShift, r.position.y << bitShift, tileSize, tileSize);
+					}
 				}
 			}
-		}	
+		}
+		else {
+			for(Class<? extends Renderable> renderableClass: RenderPriority.INSTANCE.getRenderLayers()){
+				Collection<? extends Renderable> renderLayer = em.getAllComponentsOfType(renderableClass);
+				for(Renderable r : renderLayer){
+					baseGraphics.setColor(r.tile.color);
+					if (r instanceof MiddleRenderable){
+						baseGraphics.drawRect(r.position.x * tileSize, r.position.y * tileSize, tileSize, tileSize);
+					}
+					else{
+						baseGraphics.fillRect(r.position.x * tileSize, r.position.y * tileSize, tileSize, tileSize);
+					}
+				}
+			}
+		}
 		
 		setFontDetails(baseGraphics);
 		baseBufferedGraphics = (Graphics2D) buffer.getDrawGraphics();
@@ -130,5 +150,18 @@ public class RenderSystem extends Canvas implements SystemProcessor{
         baseGraphics.setColor(Color.RED);
         baseGraphics.drawString(" FPS: " + fpsAvg + " | " + em.getPoolSizes(), 0, height-1);
 	}
-
+	
+	private boolean setTileRenderOffset(int tileSize){
+		int square = 1;
+		int power = 0;
+		while(tileSize >= square){
+			if(tileSize == square){
+				bitShift = power;
+				return true;
+			}
+			square = square*2;
+			power++;
+        }
+        return false;
+	}
 }
