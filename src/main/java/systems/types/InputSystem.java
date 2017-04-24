@@ -22,13 +22,13 @@ import util.RenderPriority;
 
 public class InputSystem implements SystemProcessor,MouseMotionListener, MouseInputListener{
 	
-	private EntityManager entityManger;
+	private EntityManager entityManager;
 	private int cX=0, cY=0;
 	private boolean mouseClickedFlag = false;
 	private final int tileSize;
 	
 	public InputSystem(EntityManager entityManger, int tileSize){
-		this.entityManger = entityManger;
+		this.entityManager = entityManger;
 		this.tileSize = tileSize;
 	}
 	
@@ -36,11 +36,11 @@ public class InputSystem implements SystemProcessor,MouseMotionListener, MouseIn
 	public void processOneTick(long lastFrameTick) {
 		
 		if(mouseClickedFlag){
-			Collection<Entity> entities = entityManger.getAllEntitiesPossesingComponent(MiddleRenderable.class);
+			Collection<Entity> entities = entityManager.getAllEntitiesPossesingComponent(MiddleRenderable.class);
 			int removed =0;
 			for(Entity entity : entities){
-				Renderable rend = entityManger.getComponent(entity, MiddleRenderable.class);
-					entityManger.recycleActiveEntity(entity);
+				Renderable rend = entityManager.getComponent(entity, MiddleRenderable.class);
+				entityManager.recycleActiveEntity(entity);
 					removed++;
 				
 			}
@@ -49,29 +49,29 @@ public class InputSystem implements SystemProcessor,MouseMotionListener, MouseIn
 			mouseClickedFlag = false;
 		}
 		
-		Collection<Entity> entities = entityManger.getAllEntitiesPossesingComponent(MiddleRenderable.class);
+		Collection<Entity> entities = entityManager.getAllEntitiesPossesingComponent(MiddleRenderable.class);
 		int removed =0;
 		for(Entity entity : entities){
-			Renderable rend = entityManger.getComponent(entity, MiddleRenderable.class);
-				entityManger.recycleActiveEntity(entity);
+			Renderable rend = entityManager.getComponent(entity, MiddleRenderable.class);
+			entityManager.recycleActiveEntity(entity);
 				removed++;
 			
 		}
 		
-		Collection<MiddleRenderable> middle = entityManger.getAllComponentsOfType(MiddleRenderable.class);
+		Collection<MiddleRenderable> middle = entityManager.getAllComponentsOfType(MiddleRenderable.class);
 		for(Renderable mid : middle){
 			if(mid.position.x == cX && mid.position.y == cY ) return;
 		}
-		Collection<BaseRenderable> base = entityManger.getAllComponentsOfType(BaseRenderable.class);
+		Collection<BaseRenderable> base = entityManager.getAllComponentsOfType(BaseRenderable.class);
 		
 		for(Renderable b : base){
 			if(b.position.x == cX && b.position.y == cY && b.tile.solid ) return;
 		}
-		Entity entity = entityManger.retrieveEntity();
+		Entity entity = entityManager.retrieveEntity();
 		Position pos = new Position(cX,cY);
 		Renderable r =  new MiddleRenderable(pos,TileType.MAGENTA);
-		entityManger.addComponent(entity,pos);
-		entityManger.addComponent(entity,r);
+		entityManager.addComponent(entity,pos);
+		entityManager.addComponent(entity,r);
 		
 	}
 
