@@ -92,12 +92,12 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 				Collection<? extends Renderable> renderLayer = em.getAllComponentsOfType(renderableClass);
 				for(Renderable r : renderLayer){
 					baseGraphics.setColor(r.tile.color);
-					if (r instanceof MiddleRenderable){
+					/*if (r instanceof MiddleRenderable){
 						baseGraphics.drawRect(r.position.x << bitShift, r.position.y << bitShift, tileSize, tileSize);
 					}
-					else{
+					else{*/
 						baseGraphics.fillRect(r.position.x << bitShift, r.position.y << bitShift, tileSize, tileSize);
-					}
+					//}
 				}
 			}
 		}
@@ -106,12 +106,12 @@ public class RenderSystem extends Canvas implements SystemProcessor{
 				Collection<? extends Renderable> renderLayer = em.getAllComponentsOfType(renderableClass);
 				for(Renderable r : renderLayer){
 					baseGraphics.setColor(r.tile.color);
-					if (r instanceof MiddleRenderable){
+					/*if (r instanceof MiddleRenderable){
 						baseGraphics.drawRect(r.position.x * tileSize, r.position.y * tileSize, tileSize, tileSize);
 					}
-					else{
+					else{*/
 						baseGraphics.fillRect(r.position.x * tileSize, r.position.y * tileSize, tileSize, tileSize);
-					}
+					//}
 				}
 			}
 		}

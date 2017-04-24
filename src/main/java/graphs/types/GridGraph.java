@@ -10,7 +10,7 @@ import graphs.vectors.Vector2d;
 public class GridGraph {
 
 	protected static final int[][] DIRS = {{1,0},{0,1},{-1,0},{0,-1}};
-	protected final int ROWS,COLUMNS;
+	public final int ROWS,COLUMNS;
 	protected final Long SEED;
 	
 	protected ArrayList<GridNode> nodeList  = new ArrayList<GridNode>();	

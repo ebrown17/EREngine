@@ -2,6 +2,7 @@ package systems.types;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.PriorityQueue;
 import java.util.TreeSet;
@@ -11,24 +12,32 @@ import javax.swing.event.MouseInputListener;
 
 import components.types.BaseRenderable;
 import components.types.MiddleRenderable;
+import components.types.Path;
+import components.types.PathCoordinates;
 import components.types.Position;
 import components.types.Renderable;
 import components.types.TopRenderable;
 import entities.Entity;
+import graphs.nodes.GridNode;
+import graphs.types.GridGraph;
+import graphs.vectors.Vector2d;
 import managers.EntityManager;
 import maps.TileType;
+import maps.mazes.RecursiveMaze;
 import systems.SystemProcessor;
 import util.RenderPriority;
 
 public class InputSystem implements SystemProcessor,MouseMotionListener, MouseInputListener{
 	
 	private EntityManager entityManager;
+	private GridGraph map;
 	private int cX=0, cY=0;
 	private boolean mouseClickedFlag = false;
 	private final int tileSize;
 	
-	public InputSystem(EntityManager entityManger, int tileSize){
+	public InputSystem(EntityManager entityManger,GridGraph map, int tileSize){
 		this.entityManager = entityManger;
+		this.map=map;
 		this.tileSize = tileSize;
 	}
 	
@@ -39,14 +48,33 @@ public class InputSystem implements SystemProcessor,MouseMotionListener, MouseIn
 			Collection<Entity> entities = entityManager.getAllEntitiesPossesingComponent(MiddleRenderable.class);
 			int removed =0;
 			for(Entity entity : entities){
-				Renderable rend = entityManager.getComponent(entity, MiddleRenderable.class);
 				entityManager.recycleActiveEntity(entity);
-					removed++;
-				
+					removed++;				
+			}	
+			
+			entities = entityManager.getAllEntitiesPossesingComponent(PathCoordinates.class);
+			for(Entity entity : entities){
+				entityManager.recycleActiveEntity(entity);
+				removed++;				
 			}
+			entities = entityManager.getAllEntitiesPossesingComponent(Path.class);
+			for(Entity entity : entities){
+				entityManager.recycleActiveEntity(entity);
+				removed++;				
+			}
+			
 			
 			System.out.println("removed: " +  removed);
 			mouseClickedFlag = false;
+			
+			Entity entity = entityManager.retrieveEntity();
+			Vector2d current = new Vector2d(cX,cY);
+			RecursiveMaze test = (RecursiveMaze)map;
+			PathCoordinates coords = new PathCoordinates(current,test.getEnd().postion);
+			entityManager.addComponent(entity,coords);
+			//Renderable r =  new MiddleRenderable(pos,TileType.MAGENTA);
+			
+			
 		}
 		
 		Collection<Entity> entities = entityManager.getAllEntitiesPossesingComponent(MiddleRenderable.class);
@@ -54,7 +82,7 @@ public class InputSystem implements SystemProcessor,MouseMotionListener, MouseIn
 		for(Entity entity : entities){
 			Renderable rend = entityManager.getComponent(entity, MiddleRenderable.class);
 			entityManager.recycleActiveEntity(entity);
-				removed++;
+			removed++;
 			
 		}
 		

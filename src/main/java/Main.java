@@ -11,6 +11,7 @@ import managers.MapManager;
 import managers.RandomGeneratorManager;
 import maps.TileType;
 import systems.types.InputSystem;
+import systems.types.PathSystem;
 import systems.types.RenderSystem;
 import util.RenderPriority;
 
@@ -27,12 +28,6 @@ public class Main {
 		EntityManager entityManager = new EntityManager();
 		RandomGeneratorManager masterRandom = new RandomGeneratorManager(seed);		
 		MapManager mapManager = new MapManager();
-		
-		InputSystem inputSystem = new InputSystem(entityManager,TILESIZE);
-		RenderSystem renderSystem = new RenderSystem(WIDTH,HEIGHT,TILESIZE,entityManager);
-		
-		renderSystem.setMouseListener(inputSystem);
-		renderSystem.setMouseEventListener(inputSystem);
 		
 		Long idSeed = masterRandom.getNewSeed();		
 		mapManager.createMazeData(scaleX, scaleY, idSeed);
@@ -54,12 +49,20 @@ public class Main {
 			entityManager.addComponent(entity,r);
 		}
 		
+		
+		InputSystem inputSystem = new InputSystem(entityManager,maze,TILESIZE);
+		RenderSystem renderSystem = new RenderSystem(WIDTH,HEIGHT,TILESIZE,entityManager);
+		PathSystem pathSystem = new PathSystem(entityManager,maze);
+		
+		renderSystem.setMouseListener(inputSystem);
+		renderSystem.setMouseEventListener(inputSystem);
+		
 		while(true){
 			
 			long currentTick = System.nanoTime();
 			
 			inputSystem.processOneTick(currentTick);
-			
+			pathSystem.processOneTick(currentTick);
 			renderSystem.processOneTick(currentTick);
 			
 			try {
