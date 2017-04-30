@@ -11,7 +11,6 @@ import maps.TileType;
 public class RecursiveMaze extends GridGraph {
 	
 	public GridNode start,end;
-	//private Random rand = new Random(625678);
 	
 	/**	  
 	 * @param rows number of rows a maze will have
@@ -20,11 +19,7 @@ public class RecursiveMaze extends GridGraph {
 	
 	public RecursiveMaze(int rows, int columns,Long seed){
 		super(rows,columns,seed);
-		long one = System.currentTimeMillis();
 		generateRecursiveMaze();
-		long two = System.currentTimeMillis();
-		long total = two-one;
-		//System.out.println( total + " ms to create maze");
 	}	
 	
 	private void generateRecursiveMaze(){

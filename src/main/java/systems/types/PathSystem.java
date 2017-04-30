@@ -2,17 +2,15 @@ package systems.types;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
 import components.types.MiddleRenderable;
 import components.types.Path;
-import components.types.PathCoordinates;
 import components.types.Position;
 import components.types.Renderable;
-import components.types.TopRenderable;
+import components.types.WantsPath;
 import entities.Entity;
 import graphs.nodes.GridNode;
 import graphs.types.GridGraph;
@@ -35,26 +33,34 @@ public class PathSystem  implements SystemProcessor{
 	@Override
 	public void processOneTick(long lastFrameTick) {
 
-		Collection<PathCoordinates> coords =entityManager.getAllComponentsOfType(PathCoordinates.class);
-		if(!coords.isEmpty()){
-			for(PathCoordinates coord : coords){
-				int index = (coord.start.x*currentMap.COLUMNS)+coord.start.y;
+		Collection<WantsPath> startEndPairs =entityManager.getAllComponentsOfType(WantsPath.class);
+		Collection<Entity> entities =entityManager.getAllEntitiesPossesingComponent(WantsPath.class);
+		
+		if(!startEndPairs.isEmpty() ){
+			for(WantsPath startEndPair : startEndPairs){
+				int index = (startEndPair.start.x*currentMap.COLUMNS)+startEndPair.start.y;
 				GridNode start = currentMap.getNodeList().get(index);
-				index = (coord.goal.x*currentMap.COLUMNS)+coord.goal.y;
+				index = (startEndPair.end.x*currentMap.COLUMNS)+startEndPair.end.y;
 				GridNode end = currentMap.getNodeList().get(index);
 				path = aStarSearch( start, end);
 						
+			
+				
+				for(Vector2d v : path){
+					Entity entity = entityManager.retrieveEntity();
+					Position pos = new Position(v.x,v.y);
+					Renderable r =  new MiddleRenderable(pos,TileType.PATH);
+					Path pathe = new Path(pos);
+					entityManager.addComponent(entity,pos);
+					entityManager.addComponent(entity,pathe);
+					entityManager.addComponent(entity,r);
+				}
+					
+			}
+			for(Entity entity: entities){
+				entityManager.recycleActiveEntity(entity);
 			}
 			
-			for(Vector2d v : path){
-				Entity entity = entityManager.retrieveEntity();
-				Position pos = new Position(v.x,v.y);
-				Renderable r =  new MiddleRenderable(pos,TileType.PATH);
-				Path pathe = new Path(pos);
-				entityManager.addComponent(entity,pos);
-				entityManager.addComponent(entity,pathe);
-				entityManager.addComponent(entity,r);
-			}
 		}
 		
 	}
@@ -109,8 +115,7 @@ public class PathSystem  implements SystemProcessor{
 			vectorPath.add(node.postion);
 			count++;
 		}	
-		
-		//System.out.println(count + " moves to solve");
+				
 		return vectorPath;
 	}
 	
