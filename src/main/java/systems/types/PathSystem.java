@@ -7,7 +7,7 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 
 import components.types.MiddleRenderable;
-import components.types.Path;
+import components.types.PathComponent;
 import components.types.Position;
 import components.types.Renderable;
 import components.types.WantsPath;
@@ -50,7 +50,7 @@ public class PathSystem  implements SystemProcessor{
 					Entity entity = entityManager.retrieveEntity();
 					Position pos = new Position(v.x,v.y);
 					Renderable r =  new MiddleRenderable(pos,TileType.PATH);
-					Path pathe = new Path(pos);
+					PathComponent pathe = new PathComponent(pos);
 					entityManager.addComponent(entity,pos);
 					entityManager.addComponent(entity,pathe);
 					entityManager.addComponent(entity,r);
@@ -108,12 +108,12 @@ public class PathSystem  implements SystemProcessor{
 			current = cameFrom.get(current);		
 			path.add(current);			
 		}
-		int count=0;
+		
 		for(GridNode node: path ){
 			if(node.postion.sameVector(start.postion) || node.postion.sameVector(end.postion))continue;
 			//node.tile = TileType.PATH;
 			vectorPath.add(node.postion);
-			count++;
+			
 		}	
 				
 		return vectorPath;

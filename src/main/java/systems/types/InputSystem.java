@@ -8,7 +8,7 @@ import javax.swing.event.MouseInputListener;
 
 import components.types.BaseRenderable;
 import components.types.MiddleRenderable;
-import components.types.Path;
+import components.types.PathComponent;
 import components.types.Position;
 import components.types.Renderable;
 import components.types.WantsPath;
@@ -37,7 +37,7 @@ public class InputSystem implements SystemProcessor, MouseMotionListener, MouseI
 
 	@Override
 	public void processOneTick(long lastFrameTick) {
-		if ((oldX == cX) && (oldY == cY)) {
+		if ((oldX == cX && oldY == cY) || mouseClickedFlag ) {
 			return;
 		}
 		oldX = cX;
@@ -61,7 +61,7 @@ public class InputSystem implements SystemProcessor, MouseMotionListener, MouseI
 			entityManager.recycleActiveEntity(entity);
 			removed++;
 		}
-		Collection<Entity> entitiesP = entityManager.getAllEntitiesPossesingComponent(Path.class);
+		Collection<Entity> entitiesP = entityManager.getAllEntitiesPossesingComponent(PathComponent.class);
 		for (Entity entity : entitiesP) {
 			entityManager.recycleActiveEntity(entity);
 			removed++;
@@ -79,8 +79,8 @@ public class InputSystem implements SystemProcessor, MouseMotionListener, MouseI
 		Entity entity = entityManager.retrieveEntity();
 		Vector2d current = new Vector2d(cX, cY);
 		RecursiveMaze test = (RecursiveMaze) map;
-		WantsPath coords = new WantsPath(current, test.getEnd().postion);
-		entityManager.addComponent(entity, coords);
+		WantsPath wantsPath = new WantsPath(current, test.getEnd().postion);
+		entityManager.addComponent(entity, wantsPath);
 
 		entity = entityManager.retrieveEntity();
 		Position pos = new Position(cX, cY);
@@ -107,7 +107,10 @@ public class InputSystem implements SystemProcessor, MouseMotionListener, MouseI
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
-		mouseClickedFlag = true;
+		if(e.getButton() == MouseEvent.BUTTON1){
+			mouseClickedFlag = !mouseClickedFlag;
+		}
+		
 
 	}
 

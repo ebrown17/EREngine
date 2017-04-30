@@ -2,11 +2,11 @@ package components.types;
 
 import components.Component;
 
-public class Path implements Component {
+public class PathComponent implements Component {
 	
 	public Position pos;
 	
-	public Path(Position pos){
+	public PathComponent(Position pos){
 		this.pos=pos;
 	}
 
