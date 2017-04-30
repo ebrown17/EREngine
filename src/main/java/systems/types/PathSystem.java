@@ -34,7 +34,7 @@ public class PathSystem  implements SystemProcessor{
 	public void processOneTick(long lastFrameTick) {
 
 		Collection<WantsPath> startEndPairs =entityManager.getAllComponentsOfType(WantsPath.class);
-		Collection<Entity> entities =entityManager.getAllEntitiesPossesingComponent(WantsPath.class);
+		Collection<Entity> entitiesWantingPath =entityManager.getAllEntitiesPossesingComponent(WantsPath.class);
 		
 		if(!startEndPairs.isEmpty() ){
 			for(WantsPath startEndPair : startEndPairs){
@@ -42,7 +42,7 @@ public class PathSystem  implements SystemProcessor{
 				GridNode start = currentMap.getNodeList().get(index);
 				index = (startEndPair.end.x*currentMap.COLUMNS)+startEndPair.end.y;
 				GridNode end = currentMap.getNodeList().get(index);
-				path = aStarSearch( start, end);
+				path = aStarSearch(start,end);
 						
 			
 				
@@ -57,7 +57,8 @@ public class PathSystem  implements SystemProcessor{
 				}
 					
 			}
-			for(Entity entity: entities){
+			
+			for(Entity entity: entitiesWantingPath){
 				entityManager.recycleActiveEntity(entity);
 			}
 			
