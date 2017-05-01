@@ -74,7 +74,6 @@ public class InputSystem implements SystemProcessor, MouseMotionListener, MouseI
 			if (mid.position.x == cX && mid.position.y == cY)
 				return;
 		}
-		
 
 		Entity entity = entityManager.retrieveEntity();
 		Vector2d current = new Vector2d(cX, cY);
@@ -82,7 +81,6 @@ public class InputSystem implements SystemProcessor, MouseMotionListener, MouseI
 		WantsPath wantsPath = new WantsPath(current, test.getEnd().postion);
 		entityManager.addComponent(entity, wantsPath);
 
-		entity = entityManager.retrieveEntity();
 		Position pos = new Position(cX, cY);
 		Renderable r = new MiddleRenderable(pos, TileType.MAGENTA);
 		entityManager.addComponent(entity, pos);

@@ -33,33 +33,32 @@ public class PathSystem  implements SystemProcessor{
 	@Override
 	public void processOneTick(long lastFrameTick) {
 
-		Collection<WantsPath> startEndPairs =entityManager.getAllComponentsOfType(WantsPath.class);
 		Collection<Entity> entitiesWantingPath =entityManager.getAllEntitiesPossesingComponent(WantsPath.class);
 		
-		if(!startEndPairs.isEmpty() ){
-			for(WantsPath startEndPair : startEndPairs){
-				int index = (startEndPair.start.x*currentMap.COLUMNS)+startEndPair.start.y;
+		if(!entitiesWantingPath.isEmpty() ){
+			for(Entity entity:entitiesWantingPath ){
+				WantsPath wp=	entityManager.getComponent(entity, WantsPath.class);
+				int index = (wp.start.x*currentMap.COLUMNS)+wp.start.y;
 				GridNode start = currentMap.getNodeList().get(index);
-				index = (startEndPair.end.x*currentMap.COLUMNS)+startEndPair.end.y;
+				index = (wp.end.x*currentMap.COLUMNS)+wp.end.y;
 				GridNode end = currentMap.getNodeList().get(index);
 				path = aStarSearch(start,end);
-						
-			
-				
+								
 				for(Vector2d v : path){
-					Entity entity = entityManager.retrieveEntity();
+					Entity nEntity = entityManager.retrieveEntity();
 					Position pos = new Position(v.x,v.y);
 					Renderable r =  new MiddleRenderable(pos,TileType.PATH);
-					PathComponent pathe = new PathComponent(pos);
-					entityManager.addComponent(entity,pos);
-					entityManager.addComponent(entity,pathe);
-					entityManager.addComponent(entity,r);
+					entityManager.addComponent(nEntity,pos);
+					entityManager.addComponent(nEntity,r);
 				}
-					
-			}
+								
+				PathComponent pathe = new PathComponent(path);
+				entityManager.addComponent(entity,pathe);
+				
+			}		
 			
 			for(Entity entity: entitiesWantingPath){
-				entityManager.recycleActiveEntity(entity);
+				entityManager.removeComponent(entity, WantsPath.class);
 			}
 			
 		}
