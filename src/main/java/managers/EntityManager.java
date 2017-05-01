@@ -132,6 +132,19 @@ public class EntityManager {
 		
 	}
 	
+	/**
+	 * @param 	entity
+	 * 			that may contain the componentType
+	 * @param	componentType is the implemented class of <code>Component</code> 		
+	 * 
+	 * @return	If the <i>Entity</i> contains the <code>componentType</code>, the <code>Component</code> 
+	 * 			is returned. If the <i>Entity</i> does not contain the specified <code>componentType</code> an
+	 * 			exception is thrown.  Currently if the <i>Entity</i> contains more than one 
+	 * 			<code>Component</code> of the same type and you try to retrieve them, the results are undefined with this function.
+	 * 
+	 * @throws	IllegalArgumentException is thrown when no entities contain the specified <code>componentType</code> or if
+	 * 			the <i>Entity</i> does not contain the specified <code>componentType</code>
+	 */	
 	public <T extends Component> T getComponent(Entity entity,Class<T> componentType){
 		HashMap<Integer, ? extends Component> component = componentMap.get( componentType );
 		   
@@ -141,6 +154,18 @@ public class EntityManager {
 		if( result == null ) throw new IllegalArgumentException( "GET FAIL: "+entity+" does not possess Component of class missing: "+componentType );
 
 		return result;
+	}
+	
+	public <T extends Component> boolean removeComponent(Entity entity,Class<T> componentType){
+		HashMap<Integer, ? extends Component> component = componentMap.get( componentType );
+		   
+		if( component == null) throw new IllegalArgumentException( "Exception: there are no entities with a Component of class: "+componentType );
+		   
+		component.remove(entity.getId());
+		/*T result = componentType.cast(component.get(entity.getId()));
+		if( result == null ) throw new IllegalArgumentException( "GET FAIL: "+entity+" does not possess Component of class missing: "+componentType );
+*/
+		return true;
 	}
 	
 	public <T extends Component> Collection<T> getAllComponentsOfType(Class<T> componentType){
