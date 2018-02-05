@@ -10,10 +10,13 @@ import managers.FontManager;
 import managers.MapManager;
 import managers.RandomGeneratorManager;
 import maps.TileType;
+import maps.mazes.RecursiveMaze;
 import systems.types.InputSystem;
 import systems.types.PathSystem;
 import systems.types.RenderSystem;
 import util.RenderPriority;
+import util.input.Keyboard;
+import util.input.Mouse;
 
 public class Main {
 
@@ -49,19 +52,27 @@ public class Main {
 			entityManager.addComponent(entity,r);
 		}
 		
-		
-		InputSystem inputSystem = new InputSystem(entityManager,maze,TILESIZE);
+		Mouse mouse = new Mouse();
+		Keyboard keyboard = new Keyboard();
+		InputSystem inputSystem = new InputSystem(entityManager,(RecursiveMaze) maze,TILESIZE,mouse,keyboard);
 		RenderSystem renderSystem = new RenderSystem(WIDTH,HEIGHT,TILESIZE,entityManager);
 		PathSystem pathSystem = new PathSystem(entityManager,maze);
 		
-		renderSystem.setMouseListener(inputSystem);
-		renderSystem.setMouseEventListener(inputSystem);
+		renderSystem.setMouseListener(mouse);
+		renderSystem.setMouseEventListener(mouse);
+		renderSystem.addKeyListener(keyboard);
+		
+		long delayTick=0;
 		
 		while(true){
 			
 			long currentTick = System.nanoTime();
 			
-			inputSystem.processOneTick(currentTick);
+			if(currentTick -  delayTick > 1000000000/4){
+			  delayTick = currentTick;
+			  inputSystem.processOneTick(currentTick);
+			}
+			
 			pathSystem.processOneTick(currentTick);
 			renderSystem.processOneTick(currentTick);
 			
