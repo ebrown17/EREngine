@@ -13,8 +13,15 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
+import java.util.Map;
 
+import javax.swing.Action;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JRootPane;
+import javax.swing.KeyStroke;
 
 import components.types.MiddleRenderable;
 import components.types.Renderable;
@@ -22,6 +29,7 @@ import managers.EntityManager;
 import managers.FontManager;
 import systems.SystemProcessor;
 import util.RenderPriority;
+import util.input.KeyBindings;
 
 public class RenderSystem extends Canvas implements SystemProcessor {
 
@@ -71,7 +79,24 @@ public class RenderSystem extends Canvas implements SystemProcessor {
     this.addMouseListener(mML);
   }
 
-  @Override
+  public void addKeyBindings(KeyBindings bindings) {
+    JRootPane root = frame.getRootPane();
+    int in_focus = JComponent.WHEN_IN_FOCUSED_WINDOW;
+    InputMap inMap = root.getInputMap(in_focus);
+    ActionMap aMap = root.getActionMap();
+    
+    for(Map.Entry<KeyStroke, String> entry : bindings.defaultKeyStrokes.entrySet()) {
+      System.out.println("added keys: " +entry.getValue() );
+      inMap.put(entry.getKey(), entry.getValue());
+    }
+    
+    for(Map.Entry<String, Action> entry : bindings.defaultActionMap.entrySet()) {
+      System.out.println("added keys: " +entry.getKey() );
+      aMap.put(entry.getKey(), entry.getValue());
+    }
+    
+  }
+  
   public void processOneTick(long lastFrameTick) {
     fps++;
     if (lastFrameTick - previousGameTick > SECOND_IN_NANOTIME) {

@@ -6,7 +6,6 @@ import entities.Entity;
 import graphs.nodes.GridNode;
 import graphs.types.GridGraph;
 import managers.EntityManager;
-import managers.FontManager;
 import managers.MapManager;
 import managers.RandomGeneratorManager;
 import maps.TileType;
@@ -14,7 +13,7 @@ import maps.mazes.RecursiveMaze;
 import systems.types.InputSystem;
 import systems.types.PathSystem;
 import systems.types.RenderSystem;
-import util.RenderPriority;
+import util.input.KeyBindings;
 import util.input.Keyboard;
 import util.input.Mouse;
 
@@ -23,8 +22,8 @@ public class Main {
 	
 	public static void main(String[] args){
 		String seed = "TESTersss";	
-		final int TILESIZE=16;
-		final int WIDTH=800,HEIGHT=800;
+		final int TILESIZE=32;
+		final int WIDTH=1920,HEIGHT=1080;
 		int scaleX=WIDTH/TILESIZE, scaleY=HEIGHT/TILESIZE;
 		
 		
@@ -60,7 +59,11 @@ public class Main {
 		
 		renderSystem.setMouseListener(mouse);
 		renderSystem.setMouseEventListener(mouse);
-		renderSystem.addKeyListener(keyboard);
+		
+		KeyBindings bindings = new KeyBindings();
+		renderSystem.addKeyBindings(bindings);
+		
+	//	renderSystem.addKeyListener(keyboard);
 		
 		long delayTick=0;
 		
