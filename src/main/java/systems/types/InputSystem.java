@@ -27,44 +27,28 @@ import util.input.Mouse;
 public class InputSystem implements SystemProcessor {
 
   private EntityManager entityManager;
-  private RecursiveMaze map;
   private int cX = 0, cY = 0;
-  private boolean isUpMove = false, isDownMove=false, isLMove = false, isRMove=false;
   private int oldX = 0, oldY = 0,dX=0,dY=0;
   private int maxX, maxY;
   private boolean mouseClickedFlag = false;
-  private final int tileSize;
   private Mouse mouse;
   private Keyboard keyboard;
 
-  public InputSystem(EntityManager entityManger, RecursiveMaze map, int tileSize, Mouse mouse, Keyboard keyboard) {
+  public InputSystem(EntityManager entityManger, Mouse mouse, Keyboard keyboard) {
     this.entityManager = entityManger;
-    this.map = map;
-    this.tileSize = tileSize;
     this.mouse = mouse;
     this.keyboard = keyboard;
-    this.cX=map.getStart().postion.x;
-    this.cY=map.getStart().postion.y;
     dX=cX;
     dY=cY;
-    this.maxX=map.ROWS;
-    this.maxY=map.COLUMNS;
-    
   }
 
   @Override
   public void processOneTick(long lastFrameTick) {
-    HashMap<Integer, Boolean> keyMap = keyboard.getKeyMap();
+    Collection<Entity> entitiesM = entityManager.getAllEntitiesPossesingComponent(MiddleRenderable.class);
+    Entity player = entitiesM.iterator().next();
+    Position playerPos = entityManager.getComponent(player, Position.class);
+    Vector2d currentPos = new Vector2d(playerPos.x,playerPos.y);
     
-    isUpMove = keyMap.get(KeyEvent.VK_W);
-    isDownMove = keyMap.get(KeyEvent.VK_S);
-    isLMove = keyMap.get(KeyEvent.VK_A);
-    isRMove = keyMap.get(KeyEvent.VK_D);
-    
-   /* cX = mouse.getCurrentX() / tileSize;
-    cY = mouse.getCurrentY() / tileSize;*/
-    dX=cX;
-    dY=cY;
     
     if(isUpMove ){
       if(dY < 2) return;

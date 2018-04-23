@@ -23,7 +23,7 @@ public class Main {
 	public static void main(String[] args){
 		String seed = "TESTersss";	
 		final int TILESIZE=32;
-		final int WIDTH=1920,HEIGHT=1080;
+		final int WIDTH=800,HEIGHT=600;
 		int scaleX=WIDTH/TILESIZE, scaleY=HEIGHT/TILESIZE;
 		
 		
