@@ -30,6 +30,7 @@ import managers.FontManager;
 import systems.SystemProcessor;
 import util.RenderPriority;
 import util.input.KeyBindings;
+import util.input.Mouse;
 
 public class RenderSystem extends Canvas implements SystemProcessor {
 
@@ -71,32 +72,15 @@ public class RenderSystem extends Canvas implements SystemProcessor {
     frame.setVisible(true);
   }
 
-  public void setMouseListener(MouseMotionListener mML) {
-    this.addMouseMotionListener(mML);
+  public void setMouseListener(Mouse mouse){
+    addMouseListener(mouse);
+    addMouseMotionListener(mouse);
   }
 
-  public void setMouseEventListener(MouseListener mML) {
-    this.addMouseListener(mML);
+  public JRootPane getRootPane(){
+    return frame.getRootPane();
   }
 
-  public void addKeyBindings(KeyBindings bindings) {
-    JRootPane root = frame.getRootPane();
-    int in_focus = JComponent.WHEN_IN_FOCUSED_WINDOW;
-    InputMap inMap = root.getInputMap(in_focus);
-    ActionMap aMap = root.getActionMap();
-    
-    for(Map.Entry<KeyStroke, String> entry : bindings.defaultKeyStrokes.entrySet()) {
-      System.out.println("added keys: " +entry.getValue() );
-      inMap.put(entry.getKey(), entry.getValue());
-    }
-    
-    for(Map.Entry<String, Action> entry : bindings.defaultActionMap.entrySet()) {
-      System.out.println("added keys: " +entry.getKey() );
-      aMap.put(entry.getKey(), entry.getValue());
-    }
-    
-  }
-  
   public void processOneTick(long lastFrameTick) {
     fps++;
     if (lastFrameTick - previousGameTick > SECOND_IN_NANOTIME) {
@@ -112,18 +96,17 @@ public class RenderSystem extends Canvas implements SystemProcessor {
       return;
     }
 
-
     // get buffered image to draw to
     baseGraphics = baseImage.createGraphics();
 
     // clears image
     baseGraphics.clearRect(0, 0, getWidth(), getHeight());
 
-
     // use multiplication or use bitshifting to determine render postion
 
     if (bitShiftable) {
-      for (Class<? extends Renderable> renderableClass : RenderPriority.INSTANCE.getRenderLayers()) {
+      for (Class<? extends Renderable> renderableClass :
+          RenderPriority.INSTANCE.getRenderLayers()) {
         Collection<? extends Renderable> renderLayer = em.getAllComponentsOfType(renderableClass);
         for (Renderable r : renderLayer) {
           baseGraphics.setColor(r.tile.color);
@@ -131,13 +114,14 @@ public class RenderSystem extends Canvas implements SystemProcessor {
            * if (r instanceof MiddleRenderable){ baseGraphics.drawRect(r.position.x << bitShift,
            * r.position.y << bitShift, tileSize, tileSize); } else{
            */
-          baseGraphics.fillRect(r.position.x << bitShift, r.position.y << bitShift, tileSize, tileSize);
+          baseGraphics.fillRect(
+              r.position.x << bitShift, r.position.y << bitShift, tileSize, tileSize);
           // }
         }
       }
-    }
-    else {
-      for (Class<? extends Renderable> renderableClass : RenderPriority.INSTANCE.getRenderLayers()) {
+    } else {
+      for (Class<? extends Renderable> renderableClass :
+          RenderPriority.INSTANCE.getRenderLayers()) {
         Collection<? extends Renderable> renderLayer = em.getAllComponentsOfType(renderableClass);
         for (Renderable r : renderLayer) {
           baseGraphics.setColor(r.tile.color);
@@ -145,7 +129,8 @@ public class RenderSystem extends Canvas implements SystemProcessor {
            * if (r instanceof MiddleRenderable){ baseGraphics.drawRect(r.position.x * tileSize,
            * r.position.y * tileSize, tileSize, tileSize); } else{
            */
-          baseGraphics.fillRect(r.position.x * tileSize, r.position.y * tileSize, tileSize, tileSize);
+          baseGraphics.fillRect(
+              r.position.x * tileSize, r.position.y * tileSize, tileSize, tileSize);
           // }
         }
       }
@@ -159,24 +144,28 @@ public class RenderSystem extends Canvas implements SystemProcessor {
       buffer.show();
     }
 
-
     baseBufferedGraphics.dispose();
     baseGraphics.dispose();
 
     Toolkit.getDefaultToolkit().sync();
-
   }
 
   private void setFontDetails(Graphics2D baseGraphics) {
-    baseGraphics.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION,
-        RenderingHints.VALUE_ALPHA_INTERPOLATION_DEFAULT);
-    baseGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-    baseGraphics.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+    baseGraphics.setRenderingHint(
+        RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_DEFAULT);
+    baseGraphics.setRenderingHint(
+        RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    baseGraphics.setRenderingHint(
+        RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
     baseGraphics.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
-    baseGraphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-    baseGraphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-    baseGraphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-    baseGraphics.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+    baseGraphics.setRenderingHint(
+        RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+    baseGraphics.setRenderingHint(
+        RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+    baseGraphics.setRenderingHint(
+        RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+    baseGraphics.setRenderingHint(
+        RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
     baseGraphics.setFont(fpsFont);
     baseGraphics.setColor(Color.RED);
     baseGraphics.drawString(" FPS: " + fpsAvg + " | " + em.getPoolSizes(), 0, height - 1);

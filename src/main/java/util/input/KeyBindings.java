@@ -1,52 +1,72 @@
 package util.input;
 
+import systems.types.InputSystem;
+
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.KeyStroke;
+import javax.swing.*;
 
 public class KeyBindings {
 
-  public Map<KeyStroke, String> defaultKeyStrokes = new HashMap<KeyStroke, String>();
-  public Map<String, Action> defaultActionMap = new HashMap<String, Action>();
+  private Map<KeyStroke, String> defaultKeyStrokes = new HashMap<KeyStroke, String>();
+  private Map<String, Action> defaultActionMap = new HashMap<String, Action>();
+
+  private InputSystem inputSystem;
 
   public KeyBindings() {
     defaultKeyStrokes.put(KeyStroke.getKeyStroke("W"), "moveForward");
     defaultKeyStrokes.put(KeyStroke.getKeyStroke("S"), "moveBack");
     defaultKeyStrokes.put(KeyStroke.getKeyStroke("A"), "moveLeft");
     defaultKeyStrokes.put(KeyStroke.getKeyStroke("D"), "moveRight");
-    
+
     defaultActionMap.put("moveForward", moveForward);
     defaultActionMap.put("moveBack", moveBack);
     defaultActionMap.put("moveLeft", moveLeft);
     defaultActionMap.put("moveRight", moveRight);
   }
 
-  Action moveForward = new AbstractAction() {
-    
-    public void actionPerformed(ActionEvent e) {
-     System.out.println("Move forward");
+  public void registerBindingListener(JRootPane root){
+    int in_focus = JComponent.WHEN_IN_FOCUSED_WINDOW;
+    InputMap inMap = root.getInputMap(in_focus);
+    ActionMap aMap = root.getActionMap();
+
+    for (Map.Entry<KeyStroke, String> entry : defaultKeyStrokes.entrySet()) {
+      inMap.put(entry.getKey(), entry.getValue());
     }
-    
-  };
-  Action moveBack = new AbstractAction() {
+
+    for (Map.Entry<String, Action> entry : defaultActionMap.entrySet()) {
+      aMap.put(entry.getKey(), entry.getValue());
+    }
+  }
+
+  private Action moveForward = new AbstractAction() {
     public void actionPerformed(ActionEvent e) {
-      System.out.println("Move back");
+      inputSystem.move(0,-1,"Up");
+    }
+
+  };
+  private Action moveBack = new AbstractAction() {
+    public void actionPerformed(ActionEvent e) {
+      inputSystem.move(0,1,"Down");
     }
   };
-  Action moveLeft = new AbstractAction() {
+  private Action moveLeft = new AbstractAction() {
     public void actionPerformed(ActionEvent e) {
-      System.out.println("Move left");
+      inputSystem.move(-1,0,"left");
     }
   };
-  Action moveRight = new AbstractAction() {
+  private Action moveRight = new AbstractAction() {
     public void actionPerformed(ActionEvent e) {
-      System.out.println("Move right");
+      inputSystem.move(1,0,"Right");
     }
   };
 
-  
+  public void setInputSystem(InputSystem inputSystem) {
+    this.inputSystem = inputSystem;
+  }
+  public enum actions {
+
+  }
 }

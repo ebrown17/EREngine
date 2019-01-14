@@ -3,8 +3,10 @@ package systems.types;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.event.MouseInputListener;
 
@@ -25,87 +27,83 @@ import util.input.Keyboard;
 import util.input.Mouse;
 
 public class InputSystem implements SystemProcessor {
-
   private EntityManager entityManager;
-  private int cX = 0, cY = 0;
-  private int oldX = 0, oldY = 0,dX=0,dY=0;
+  private RecursiveMaze map;
+  private int cX , cY;
+  private int oldX = 0, oldY = 0;
   private int maxX, maxY;
-  private boolean mouseClickedFlag = false;
+  private boolean moveAction = false;
+  private final int tileSize;
   private Mouse mouse;
-  private Keyboard keyboard;
+  private Vector2d moveVector = new Vector2d(0,0);
 
-  public InputSystem(EntityManager entityManger, Mouse mouse, Keyboard keyboard) {
+  public InputSystem(EntityManager entityManger, RecursiveMaze map, int tileSize, Mouse mouse) {
     this.entityManager = entityManger;
+    this.map = map;
+    this.tileSize = tileSize;
     this.mouse = mouse;
-    this.keyboard = keyboard;
-    dX=cX;
-    dY=cY;
+    this.cX=map.getStart().postion.x;
+    this.cY=map.getStart().postion.y;
+    this.maxX=map.ROWS;
+    this.maxY=map.COLUMNS;
+
   }
 
   @Override
   public void processOneTick(long lastFrameTick) {
-    Collection<Entity> entitiesM = entityManager.getAllEntitiesPossesingComponent(MiddleRenderable.class);
-    Entity player = entitiesM.iterator().next();
-    Position playerPos = entityManager.getComponent(player, Position.class);
-    Vector2d currentPos = new Vector2d(playerPos.x,playerPos.y);
-    
-    
-    if(isUpMove ){
-      if(dY < 2) return;
-      dY-=1;
-      System.out.println("up: dY " + dY);
-    }
-    else if(isDownMove){
-      if(dY >= maxY-2) return;
-      dY+=1;
-      System.out.println("down: dY " + dY);
-    }
-    else if(isLMove){
-      if(dX < 2) return;
-      dX-=1;
-      System.out.println("left: dX " + dX);
-    }
-    else if(isRMove){
-      if(dX >= maxX-2) return;
-      dX+=1;
-      System.out.println("right: dX " + dX);
-    }
-    
 
-    if ((oldX == dX && oldY == dY) ) {
+    boolean mouseClickedFlag = mouse.isMouseClickedFlag();
+    int mX = mouse.getCurrentX() / tileSize;
+    int mY = mouse.getCurrentY() / tileSize;
+    int kX = cX;
+    int kY = cY;
+
+    Collection<BaseRenderable> base = entityManager.getAllComponentsOfType(BaseRenderable.class);
+    if(!mouseClickedFlag){
+      for (Renderable b : base) {
+        if (b.position.x == mX && b.position.y == mY && b.tile.solid){
+          return;
+        }
+      }
+      if(mX >= maxX || mY >= maxY){
+        return;
+      }
+      cX = mX;
+      cY = mY;
+    }
+    if(moveAction){
+      kX += moveVector.x;
+      kY += moveVector.y;
+      moveAction = false;
+      for (Renderable b : base) {
+        if (b.position.x == kX && b.position.y == kY && b.tile.solid){
+          return;
+        }
+      }
+      cX = kX;
+      cY = kY;
+
+    }
+
+    if ((oldX == cX && oldY == cY) ) {
       return;
     }
-   
-    
-    Collection<BaseRenderable> base = entityManager.getAllComponentsOfType(BaseRenderable.class);
-    for (Renderable b : base) {
-      if (b.position.x == dX && b.position.y == dY && b.tile.solid)
-        return;
-    }
-    cX = dX;
-    cY= dY;
+
     oldX = cX;
     oldY = cY;
-    
+
+    ArrayDeque<Entity> entitiesToRemove = new ArrayDeque<Entity>();
     Collection<Entity> entitiesM = entityManager.getAllEntitiesPossesingComponent(MiddleRenderable.class);
-    int removed = 0;
-    for (Entity entity : entitiesM) {
-      entityManager.recycleActiveEntity(entity);
-      removed++;
-    }
-
     Collection<Entity> entitiesPC = entityManager.getAllEntitiesPossesingComponent(WantsPath.class);
-    for (Entity entity : entitiesPC) {
-      entityManager.recycleActiveEntity(entity);
-      removed++;
-    }
     Collection<Entity> entitiesP = entityManager.getAllEntitiesPossesingComponent(PathComponent.class);
-    for (Entity entity : entitiesP) {
-      entityManager.recycleActiveEntity(entity);
-      removed++;
-    }
 
-    System.out.println("removed: " + removed);
+    entitiesToRemove.addAll(entitiesM);
+    entitiesToRemove.addAll(entitiesPC);
+    entitiesToRemove.addAll(entitiesP);
+
+    for (Entity entity : entitiesToRemove) {
+      entityManager.recycleActiveEntity(entity);
+    }
 
     Collection<MiddleRenderable> middle = entityManager.getAllComponentsOfType(MiddleRenderable.class);
     for (Renderable mid : middle) {
@@ -115,15 +113,23 @@ public class InputSystem implements SystemProcessor {
 
     Entity entity = entityManager.retrieveEntity();
     Vector2d current = new Vector2d(cX, cY);
-    RecursiveMaze test = (RecursiveMaze) map;
-    WantsPath wantsPath = new WantsPath(current, test.getEnd().postion);
+    WantsPath wantsPath = new WantsPath(current, map.getEnd().postion);
     entityManager.addComponent(entity, wantsPath);
 
     Position pos = new Position(cX, cY);
     Renderable r = new MiddleRenderable(pos, TileType.MAGENTA);
     entityManager.addComponent(entity, pos);
     entityManager.addComponent(entity, r);
+    moveAction = false;
+  }
+
+  public void move(int x, int y,String actionName){
+    System.out.println("Action: " + actionName + " " + x + " " + y);
+    moveVector.setXY(x,y);
+    moveAction = true;
 
   }
+
+
 
 }
