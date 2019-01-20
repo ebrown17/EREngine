@@ -9,9 +9,9 @@ import graphs.vectors.Vector2d;
 
 public class GridGraph {
 
-	protected static final int[][] DIRS = {{1,0},{0,1},{-1,0},{0,-1}};
+	private static final int[][] DIRS = {{1,0},{0,1},{-1,0},{0,-1}};
 	public final int ROWS,COLUMNS;
-	protected final Long SEED;
+	private final Long SEED;
 	
 	protected ArrayList<GridNode> nodeList  = new ArrayList<GridNode>();	
 	protected Random rand;
@@ -22,9 +22,9 @@ public class GridGraph {
 	 * @param columns number of columns a grid will have
 	 */	
 	public GridGraph(int rows, int columns,Long seed){
-		this.ROWS=rows;
-		this.COLUMNS=columns;
-		this.SEED = seed;
+		ROWS=rows;
+		COLUMNS=columns;
+		SEED = seed;
 		rand = new Random(seed.hashCode());
 		generateNodeList();
 		setEdgeNodes();

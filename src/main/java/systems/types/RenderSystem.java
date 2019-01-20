@@ -72,12 +72,12 @@ public class RenderSystem extends Canvas implements SystemProcessor {
     frame.setVisible(true);
   }
 
-  public void setMouseListener(Mouse mouse){
+  public void setMouseListener(Mouse mouse) {
     addMouseListener(mouse);
     addMouseMotionListener(mouse);
   }
 
-  public JRootPane getRootPane(){
+  public JRootPane getRootPane() {
     return frame.getRootPane();
   }
 

@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import components.types.BaseRenderable;
-import components.types.MiddleRenderable;
-import components.types.Renderable;
-import components.types.TopRenderable;
+import components.types.*;
 
 public enum RenderPriority {
 	
@@ -16,10 +13,11 @@ public enum RenderPriority {
 	private enum  RenderLayers {
 		BASE_LAYER(BaseRenderable.class,0),
 		MIDDLE_LAYER(MiddleRenderable.class,1),
-		TOP_LAYER(TopRenderable.class,2);
+		TOP_LAYER(TopRenderable.class,2),
+		PLAYER_LAYER(PlayerRenderable.class,3);
 		
-		private Class<? extends Renderable> layer;
-		private int priority;
+		private final Class<? extends Renderable> layer;
+		private final int priority;
 		
 		private RenderLayers(Class<? extends Renderable> renderableLayer, int priority){
 			this.layer = renderableLayer;

@@ -20,6 +20,10 @@ public class KeyBindings {
     defaultKeyStrokes.put(KeyStroke.getKeyStroke("S"), "moveBack");
     defaultKeyStrokes.put(KeyStroke.getKeyStroke("A"), "moveLeft");
     defaultKeyStrokes.put(KeyStroke.getKeyStroke("D"), "moveRight");
+    defaultKeyStrokes.put(KeyStroke.getKeyStroke("UP"), "moveForward");
+    defaultKeyStrokes.put(KeyStroke.getKeyStroke("DOWN"), "moveBack");
+    defaultKeyStrokes.put(KeyStroke.getKeyStroke("LEFT"), "moveLeft");
+    defaultKeyStrokes.put(KeyStroke.getKeyStroke("RIGHT"), "moveRight");
 
     defaultActionMap.put("moveForward", moveForward);
     defaultActionMap.put("moveBack", moveBack);
