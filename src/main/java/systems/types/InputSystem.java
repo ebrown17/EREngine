@@ -56,8 +56,8 @@ public class InputSystem implements SystemProcessor {
     cY = playerR.position.y;
 
     boolean mouseClickedFlag = mouse.isMouseClickedFlag();
-    int mX = mouse.getCurrentX() / tileSize;
-    int mY = mouse.getCurrentY() / tileSize;
+    int mX = mouse.getCurrentX();
+    int mY = mouse.getCurrentY();
     int kX = cX;
     int kY = cY;
 

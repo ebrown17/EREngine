@@ -16,7 +16,7 @@ public class Main {
 
   public static void main(String[] args) {
     String seed = "TESTersss";
-    final int TILESIZE = 64;
+    final int TILESIZE = 32;
     final int WIDTH = 2560, HEIGHT = 1440;
     int scaleX = WIDTH / TILESIZE, scaleY = HEIGHT / TILESIZE;
 
@@ -64,6 +64,7 @@ public class Main {
     entityManager.addComponent(entity, cmg);
 
     Mouse mouse = new Mouse();
+    mouse.tileSize = TILESIZE;
     KeyBindings bindings = new KeyBindings();
     InputSystem inputSystem = new InputSystem(entityManager,  TILESIZE, mouse);
 

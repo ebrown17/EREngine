@@ -1,6 +1,9 @@
 package systems.types;
 
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.image.BufferStrategy;
 import java.util.Collection;
 
@@ -26,6 +29,8 @@ public class RenderSystem extends JFrame implements SystemProcessor {
   private Graphics2D baseGraphics;
   private int bitShift = 0;
   private boolean bitShiftable = false;
+  private Mouse mouse;
+  int scaleX, scaleY;
 
   private Font fpsFont = new Font("Arial", Font.BOLD, 18);
 
@@ -35,20 +40,28 @@ public class RenderSystem extends JFrame implements SystemProcessor {
     this.tileSize = tileSize;
     this.em = em;
 
+    scaleX = width / tileSize;
+    scaleY = height / tileSize;
+
     bitShiftable = setTileRenderOffset(tileSize);
-    dimension = new Dimension(width, height);
     canvas = new Canvas();
-    canvas.setPreferredSize(dimension);
+    canvas.setPreferredSize(new Dimension(width, height));
     canvas.setIgnoreRepaint(true);
 
     add(canvas);
-    setResizable(false);
+    setResizable(true);
     setTitle("Testing");
     setIgnoreRepaint(true);
     pack();
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setLocationRelativeTo(null);
     setVisible(true);
+    getContentPane().addComponentListener(new ComponentAdapter() {
+      public void componentResized(ComponentEvent e) {
+        onComponentResized(e);
+      }
+
+    });
 
     canvas.createBufferStrategy(2);
     buffer = canvas.getBufferStrategy();
@@ -57,6 +70,7 @@ public class RenderSystem extends JFrame implements SystemProcessor {
   }
 
   public void setMouseListener(Mouse mouse) {
+    this.mouse = mouse;
     canvas.addMouseListener(mouse);
     canvas.addMouseMotionListener(mouse);
   }
@@ -71,7 +85,7 @@ public class RenderSystem extends JFrame implements SystemProcessor {
     baseGraphics.setBackground(Color.BLACK);
 
     // clears image
-    baseGraphics.clearRect(0, 0, width, height);
+    baseGraphics.clearRect(0, 0, getWidth(), getHeight());
 
 
     // use multiplication or use bitshifting to determine render postion
@@ -102,10 +116,19 @@ public class RenderSystem extends JFrame implements SystemProcessor {
     if (!buffer.contentsLost()) {
       buffer.show();
     }
-
     Toolkit.getDefaultToolkit().sync();
   }
 
+  protected void onComponentResized(ComponentEvent e){
+    canvas.setPreferredSize(new Dimension(getWidth(), getHeight()));
+
+    tileSize = getWidth() /scaleX;
+    bitShiftable = setTileRenderOffset(tileSize);
+    mouse.tileSize = tileSize;
+/*    scaleX = width / tileSize;
+    scaleY = height / tileSize;*/
+
+  }
   private void calcFps(long lastFrameTick){
     fps++;
     if (lastFrameTick - previousGameTick > SECOND_IN_NANOTIME) {
@@ -119,7 +142,7 @@ public class RenderSystem extends JFrame implements SystemProcessor {
   private void drawFPS(Graphics2D graphics){
     graphics.setFont(fpsFont);
     graphics.setColor(Color.RED);
-    graphics.drawString(" FPS: " + fpsAvg + " | " + em.getPoolSizes(), 0, height - 1);
+    graphics.drawString(" FPS: " + fpsAvg + " | " + em.getPoolSizes(), 0, tileSize/2);
   }
 
   private void setFontDetails(Graphics2D graphics) {

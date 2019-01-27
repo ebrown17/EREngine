@@ -9,14 +9,15 @@ public class Mouse implements MouseMotionListener, MouseInputListener {
 
   private int currentX = 0, currentY = 0;
   private boolean mouseClickedFlag = false;
+  public int tileSize;
 
   public int getCurrentX() {
-    return currentX;
+    return currentX / tileSize;
   }
   
 
   public int getCurrentY() {
-    return currentY;
+    return currentY/tileSize;
   }
   
 
