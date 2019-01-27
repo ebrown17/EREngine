@@ -49,7 +49,7 @@ public class GridGraph {
 	
 	private void setEdgeNodes(){
 		for(GridNode node: nodeList){
-			Vector2d vector = node.postion;
+			Vector2d vector = node.position;
 			for(int[] dir: DIRS){				
 				int nX = vector.x + dir[0];
 				int nY =vector.y + dir[1];

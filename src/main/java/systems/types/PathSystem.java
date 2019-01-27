@@ -80,7 +80,7 @@ public class PathSystem implements SystemProcessor {
     costSoFar.put(start, 0);
 
     GridNode current = null;
-    Integer cost = 0;
+    Integer cost;
 
     while (!frontier.isEmpty()) {
 
@@ -91,7 +91,7 @@ public class PathSystem implements SystemProcessor {
         cost = 1 + costSoFar.get(current);
         if (!costSoFar.containsKey(next) || cost < costSoFar.get(next)) {
           costSoFar.put(next, cost);
-          next.priority = cost + heuristic(next.postion, end.postion);
+          next.priority = cost + heuristic(next.position, end.position);
           frontier.add(next);
           cameFrom.put(next, current);
         }
@@ -107,9 +107,9 @@ public class PathSystem implements SystemProcessor {
     }
 
     for (GridNode node : path) {
-      if (node.postion.sameVector(start.postion) || node.postion.sameVector(end.postion)) continue;
+      if (node.position.sameVector(start.position) || node.position.sameVector(end.position)) continue;
       // node.tile = TileType.PATH;
-      vectorPath.add(node.postion);
+      vectorPath.add(node.position);
     }
 
     return vectorPath;

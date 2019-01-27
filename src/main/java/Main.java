@@ -31,7 +31,7 @@ public class Main {
 
     for (GridNode node : map.getNodeList()) {
       Entity entity = entityManager.retrieveEntity();
-      Position pos = new Position(node.postion.x, node.postion.y);
+      Position pos = new Position(node.position.x, node.position.y);
       Renderable r;
       if (node.tile == TileType.START || node.tile == TileType.END) {
         r = new TopRenderable(pos, node.tile);
@@ -44,14 +44,14 @@ public class Main {
 
       if (node.tile == TileType.START) {
         entity = entityManager.retrieveEntity();
-        pos = new Position(node.postion.x, node.postion.y);
+        pos = new Position(node.position.x, node.position.y);
 
         r = new MiddleRenderable(pos, node.tile);
         entityManager.addComponent(entity, pos);
         entityManager.addComponent(entity, r);
 
         entity = entityManager.retrieveEntity();
-        pos = new Position(node.postion.x, node.postion.y);
+        pos = new Position(node.position.x, node.position.y);
 
         r = new PlayerRenderable(pos, TileType.ORANGE);
         entityManager.addComponent(entity, pos);

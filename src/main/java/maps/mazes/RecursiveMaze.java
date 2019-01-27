@@ -51,7 +51,7 @@ public class RecursiveMaze extends GridGraph {
 					if(nextNeghbor.tile == TileType.WALL)count++;
 				}
 				if(count>=3){
-					if(neighbor.postion.x > 0 && neighbor.postion.y > 0 && neighbor.postion.x < ROWS-1 && neighbor.postion.y < COLUMNS-1){
+					if(neighbor.position.x > 0 && neighbor.position.y > 0 && neighbor.position.x < ROWS-1 && neighbor.position.y < COLUMNS-1){
 						neighbors.add(neighbor);
 					}
 				}

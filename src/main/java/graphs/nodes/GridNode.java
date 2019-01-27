@@ -6,14 +6,14 @@ import maps.TileType;
 
 public class GridNode implements Comparable<GridNode> {
 
-	public Vector2d postion;
+	public Vector2d position;
 	public boolean visited = false;
 	public Integer cost = 0, priority = 0;
 	public TileType tile = TileType.WALL;
 	private ArrayList<GridNode> edges = new ArrayList<GridNode>();
 
-	public GridNode(Vector2d postion) {
-		this.postion = postion;
+	public GridNode(Vector2d position) {
+		this.position = position;
 	}
 
 	public void addEdge(GridNode node) {
