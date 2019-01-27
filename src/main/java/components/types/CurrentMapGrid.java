@@ -10,6 +10,5 @@ public class CurrentMapGrid implements Component {
   public CurrentMapGrid(GridGraph map){
     maxX = map.ROWS;
     maxY = map.COLUMNS;
-    map.getNodeList();
   }
 }

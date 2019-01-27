@@ -85,14 +85,6 @@ public class InputSystem implements SystemProcessor {
       playerR.position.setPostion(kX, kY);
     }
 
-    /*    Vector2d goal= null;
-    Collection<TopRenderable> top = entityManager.getAllComponentsOfType(TopRenderable.class);
-    for (Renderable b : top) {
-      if(b.tile == TileType.END){
-        goal = new Vector2d( b.position.x, b.position.y);
-      }
-    }*/
-
     if ((prevCX == cX && prevCY == cY) && (prevMX == mX && prevMY == mY)) {
       return;
     }
@@ -105,34 +97,15 @@ public class InputSystem implements SystemProcessor {
     ArrayDeque<Entity> entitiesToRemove = new ArrayDeque<Entity>();
     Collection<Entity> entitiesM =
         entityManager.getAllEntitiesPossesingComponent(MiddleRenderable.class);
-    /*    Collection<Entity> entitiesPC = entityManager.getAllEntitiesPossesingComponent(WantsPath.class);*/
-    /*Collection<Entity> entitiesP =
-        entityManager.getAllEntitiesPossesingComponent(PathComponent.class);
-
-    if (entitiesP.iterator().hasNext()) {
-      System.out.println("cX cY: " + cX + " " + cY);
-      Entity t = entitiesP.iterator().next();
-      PathComponent pc = entityManager.getComponent(t, PathComponent.class);
-      if (pc.path.size() >= 1) {
-        Vector2d startPath = pc.path.get(pc.path.size() - 1);
-        System.out.println("SpX SPy: " + startPath.x + " " + startPath.y);
-        if (startPath.x == cX && startPath.y == cY) {
-          pc.path.remove(pc.path.size() - 1);
-          entitiesP.remove(t);
-        }
-      }
-    }*/
 
     entitiesToRemove.addAll(entitiesM);
-    // entitiesToRemove.addAll(entitiesPC);
-    // entitiesToRemove.addAll(entitiesP);
 
     int removed = 0;
     for (Entity entity : entitiesToRemove) {
       entityManager.recycleActiveEntity(entity);
       removed++;
     }
-    System.out.println("rem: " + removed);
+    //System.out.println("rem: " + removed);
 
     Collection<MiddleRenderable> middle =
         entityManager.getAllComponentsOfType(MiddleRenderable.class);

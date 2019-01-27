@@ -1,122 +1,88 @@
 package systems.types;
 
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.Toolkit;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.*;
 import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
 import java.util.Collection;
-import java.util.Map;
 
-import javax.swing.Action;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JRootPane;
-import javax.swing.KeyStroke;
 
-import components.types.MiddleRenderable;
 import components.types.Renderable;
 import managers.EntityManager;
-import managers.FontManager;
 import systems.SystemProcessor;
 import util.RenderPriority;
-import util.input.KeyBindings;
 import util.input.Mouse;
 
-public class RenderSystem extends Canvas implements SystemProcessor {
+public class RenderSystem extends JFrame implements SystemProcessor {
 
   private static final long serialVersionUID = 1L;
   private int width, height, tileSize;
   private long fps = 0, fpsAvg = 0;
-  private JFrame frame;
+  private Canvas canvas;
+  private Dimension dimension;
   private final long SECOND_IN_NANOTIME = 1000000000;
   private long previousGameTick = 0;
   private EntityManager em;
   private BufferStrategy buffer;
   private Graphics2D baseGraphics;
-  private Graphics2D baseBufferedGraphics;
   private int bitShift = 0;
   private boolean bitShiftable = false;
 
-  private Font fpsFont = new Font("Arial", Font.BOLD, 12);
-  private FontMetrics metrics;
-  private BufferedImage baseImage;
+  private Font fpsFont = new Font("Arial", Font.BOLD, 18);
 
   public RenderSystem(int width, int height, int tileSize, EntityManager em) {
     this.width = width;
     this.height = height;
     this.tileSize = tileSize;
-    setTileRenderOffset(tileSize);
-    bitShiftable = setTileRenderOffset(tileSize);
     this.em = em;
-    this.baseImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-    setPreferredSize(new Dimension(width, height));
+
+    bitShiftable = setTileRenderOffset(tileSize);
+    dimension = new Dimension(width, height);
+    canvas = new Canvas();
+    canvas.setPreferredSize(dimension);
+    canvas.setIgnoreRepaint(true);
+
+    add(canvas);
+    setResizable(false);
+    setTitle("Testing");
     setIgnoreRepaint(true);
-    frame = new JFrame();
-    frame.setResizable(false);
-    frame.setTitle("Testing");
-    frame.add(this);
-    frame.setIgnoreRepaint(true);
-    frame.pack();
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    frame.setLocationRelativeTo(null);
-    frame.setVisible(true);
+    pack();
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    setLocationRelativeTo(null);
+    setVisible(true);
+
+    canvas.createBufferStrategy(2);
+    buffer = canvas.getBufferStrategy();
+    setFontDetails((Graphics2D)buffer.getDrawGraphics());
+
   }
 
   public void setMouseListener(Mouse mouse) {
-    addMouseListener(mouse);
-    addMouseMotionListener(mouse);
-  }
-
-  public JRootPane getRootPane() {
-    return frame.getRootPane();
+    canvas.addMouseListener(mouse);
+    canvas.addMouseMotionListener(mouse);
   }
 
   public void processOneTick(long lastFrameTick) {
-    fps++;
-    if (lastFrameTick - previousGameTick > SECOND_IN_NANOTIME) {
-      previousGameTick = lastFrameTick;
-      fpsAvg = fps;
-      fps = 0;
-      frame.setTitle("FPS: " + fpsAvg);
-    }
 
-    buffer = getBufferStrategy();
-    if (buffer == null) {
-      createBufferStrategy(2);
-      return;
-    }
+    calcFps(lastFrameTick);
 
     // get buffered image to draw to
-    baseGraphics = baseImage.createGraphics();
+    baseGraphics =(Graphics2D) buffer.getDrawGraphics();
+    // set bg color
+    baseGraphics.setBackground(Color.BLACK);
 
     // clears image
-    baseGraphics.clearRect(0, 0, getWidth(), getHeight());
+    baseGraphics.clearRect(0, 0, width, height);
+
 
     // use multiplication or use bitshifting to determine render postion
-
     if (bitShiftable) {
       for (Class<? extends Renderable> renderableClass :
           RenderPriority.INSTANCE.getRenderLayers()) {
         Collection<? extends Renderable> renderLayer = em.getAllComponentsOfType(renderableClass);
         for (Renderable r : renderLayer) {
-          baseGraphics.setColor(r.tile.color);
-          /*
-           * if (r instanceof MiddleRenderable){ baseGraphics.drawRect(r.position.x << bitShift,
-           * r.position.y << bitShift, tileSize, tileSize); } else{
-           */
-          baseGraphics.fillRect(
-              r.position.x << bitShift, r.position.y << bitShift, tileSize, tileSize);
-          // }
+            baseGraphics.setColor(r.tile.color);
+            baseGraphics.fillRect(
+                r.position.x << bitShift, r.position.y << bitShift, tileSize, tileSize);
         }
       }
     } else {
@@ -125,50 +91,53 @@ public class RenderSystem extends Canvas implements SystemProcessor {
         Collection<? extends Renderable> renderLayer = em.getAllComponentsOfType(renderableClass);
         for (Renderable r : renderLayer) {
           baseGraphics.setColor(r.tile.color);
-          /*
-           * if (r instanceof MiddleRenderable){ baseGraphics.drawRect(r.position.x * tileSize,
-           * r.position.y * tileSize, tileSize, tileSize); } else{
-           */
           baseGraphics.fillRect(
               r.position.x * tileSize, r.position.y * tileSize, tileSize, tileSize);
-          // }
         }
       }
     }
+    drawFPS(baseGraphics);
 
-    setFontDetails(baseGraphics);
-    baseBufferedGraphics = (Graphics2D) buffer.getDrawGraphics();
-    baseBufferedGraphics.drawImage(baseImage, 0, 0, null);
-
+    baseGraphics.dispose();
     if (!buffer.contentsLost()) {
       buffer.show();
     }
 
-    baseBufferedGraphics.dispose();
-    baseGraphics.dispose();
-
     Toolkit.getDefaultToolkit().sync();
   }
 
-  private void setFontDetails(Graphics2D baseGraphics) {
-    baseGraphics.setRenderingHint(
+  private void calcFps(long lastFrameTick){
+    fps++;
+    if (lastFrameTick - previousGameTick > SECOND_IN_NANOTIME) {
+      previousGameTick = lastFrameTick;
+      fpsAvg = fps;
+      fps = 0;
+      setTitle("FPS: " + fpsAvg);
+    }
+  }
+
+  private void drawFPS(Graphics2D graphics){
+    graphics.setFont(fpsFont);
+    graphics.setColor(Color.RED);
+    graphics.drawString(" FPS: " + fpsAvg + " | " + em.getPoolSizes(), 0, height - 1);
+  }
+
+  private void setFontDetails(Graphics2D graphics) {
+    graphics.setRenderingHint(
         RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_DEFAULT);
-    baseGraphics.setRenderingHint(
+    graphics.setRenderingHint(
         RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-    baseGraphics.setRenderingHint(
+    graphics.setRenderingHint(
         RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
-    baseGraphics.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
-    baseGraphics.setRenderingHint(
+    graphics.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
+    graphics.setRenderingHint(
         RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-    baseGraphics.setRenderingHint(
+    graphics.setRenderingHint(
         RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-    baseGraphics.setRenderingHint(
+    graphics.setRenderingHint(
         RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-    baseGraphics.setRenderingHint(
+    graphics.setRenderingHint(
         RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-    baseGraphics.setFont(fpsFont);
-    baseGraphics.setColor(Color.RED);
-    baseGraphics.drawString(" FPS: " + fpsAvg + " | " + em.getPoolSizes(), 0, height - 1);
   }
 
   private boolean setTileRenderOffset(int tileSize) {

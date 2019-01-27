@@ -6,7 +6,6 @@ import managers.EntityManager;
 import managers.MapManager;
 import managers.RandomGeneratorManager;
 import maps.TileType;
-import maps.mazes.RecursiveMaze;
 import systems.types.InputSystem;
 import systems.types.PathSystem;
 import systems.types.RenderSystem;
@@ -17,8 +16,8 @@ public class Main {
 
   public static void main(String[] args) {
     String seed = "TESTersss";
-    final int TILESIZE = 16;
-    final int WIDTH = 800, HEIGHT = 600;
+    final int TILESIZE = 64;
+    final int WIDTH = 2560, HEIGHT = 1440;
     int scaleX = WIDTH / TILESIZE, scaleY = HEIGHT / TILESIZE;
 
     EntityManager entityManager = new EntityManager();
@@ -77,19 +76,14 @@ public class Main {
     bindings.setInputSystem(inputSystem);
 
     while (true) {
-
       long currentTick = System.nanoTime();
 
-      renderSystem.processOneTick(currentTick);
       inputSystem.processOneTick(currentTick);
 
       pathSystem.processOneTick(currentTick);
-      try {
-        Thread.sleep(10);
-      } catch (InterruptedException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
+
+      renderSystem.processOneTick(currentTick);
+
     }
   }
 }
